@@ -7,6 +7,7 @@ const {
   sendFriendRequest,
   acceptFriendRequest,
   getMyNotifications,
+  getMyFriends,
 } = require("../controllers/userControllers");
 const { login } = require("../controllers/userControllers");
 const isAuthenticated = require("../middlewares/auth");
@@ -33,6 +34,8 @@ router.put("/sendRequest", sendFriendRequest);
 router.put("/acceptRequest", acceptFriendRequest);
 
 router.get("/notifications", getMyNotifications);
+
+router.get("/friends", getMyFriends);
 
 router.get("/allusers/:id", getAllUsers);
 

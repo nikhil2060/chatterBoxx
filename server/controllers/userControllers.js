@@ -307,10 +307,16 @@ module.exports.getMyFriends = async (req, res, next) => {
   try {
     const chatId = req.query.chatId;
 
-    const chats = Chat.find({
+    const chats = await Chat.find({
       members: req.user,
       groupChat: false,
     }).populate("members", "name avatar");
+
+    if (!chats)
+      return res.status(400).json({
+        status: false,
+        msg: "Chats not found",
+      });
 
     const friends = chats.map(({ members }) => {
       const otherUser = getOtherMembers(members, req.user);
@@ -321,6 +327,8 @@ module.exports.getMyFriends = async (req, res, next) => {
         avatar: otherUser.avatar.url,
       };
     });
+
+    console.log(friends);
 
     if (chatId) {
       const chat = await Chat.findById(chatId);
