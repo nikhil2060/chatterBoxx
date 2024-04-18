@@ -4,7 +4,7 @@ const messageSchema = new mongoose.Schema(
   {
     status: {
       type: String,
-      default: "pending...",
+      default: "pending",
       enum: ["accepted", "rejected", "pending"],
     },
 
@@ -24,4 +24,4 @@ const messageSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("Message", messageSchema);
+module.exports = mongoose.model("Request", messageSchema);

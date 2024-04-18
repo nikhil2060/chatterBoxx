@@ -2,7 +2,7 @@ const Chat = require("../model/chatModel");
 const User = require("../model/userModel");
 const Message = require("../model/messageModel");
 
-const { emitEvent } = require("../utils/features");
+const { emitEvent, deleteFilesFromCloudnary } = require("../utils/features");
 const {
   ALERT,
   REFETCH_CHATS,
@@ -334,10 +334,9 @@ module.exports.sendAttachments = async (req, res, next) => {
 module.exports.getChatDetails = async (req, res, next) => {
   try {
     if (req.query.populate === "true") {
-      const chat = await Chat.findById(req.params.id).populate(
-        "members",
-        "name avatar"
-      );
+      const chat = await Chat.findById(req.params.id)
+        .populate("members", "name avatar")
+        .lean();
 
       if (!chat)
         return res.status(404).json({
@@ -350,6 +349,11 @@ module.exports.getChatDetails = async (req, res, next) => {
         name,
         avatar: avatar.url,
       }));
+
+      return res.status(200).json({
+        status: true,
+        chat,
+      });
     } else {
       const chat = await Chat.findById(req.params.id);
 
@@ -358,11 +362,149 @@ module.exports.getChatDetails = async (req, res, next) => {
           status: false,
           msg: "Chat not found",
         });
+
+      return res.status(200).json({
+        status: true,
+        chat,
+      });
     }
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports.renameGroup = async (req, res, next) => {
+  try {
+    const chatId = req.params.id;
+    const { name } = req.body;
+
+    const chat = await Chat.findById(chatId);
+
+    if (!chat)
+      return res.status(404).json({
+        status: false,
+        msg: "Chat not found",
+      });
+
+    if (!chat.groupChat)
+      return res.status(404).json({
+        status: false,
+        msg: "Chat not found",
+      });
+
+    if (chat.creater.toString() !== req.user.toString())
+      return res.status(403).json({
+        status: false,
+        msg: "You are not allowed to rename the group",
+      });
+
+    chat.name = name;
+
+    await chat.save();
+
+    emitEvent(req, REFETCH_CHATS, chat.members);
 
     return res.status(200).json({
       status: true,
-      chat,
+      msg: "Rename successfull",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports.deleteChat = async (req, res, next) => {
+  try {
+    const chatId = req.params.id;
+
+    const chat = await Chat.findById(chatId);
+
+    if (!chat)
+      return res.status(404).json({
+        status: false,
+        msg: "Chat not found",
+      });
+
+    if (!chat.groupChat)
+      return res.status(404).json({
+        status: false,
+        msg: "Chat not found",
+      });
+
+    if (chat.groupChat && chat.creater.toString() !== req.user.toString())
+      return res.status(403).json({
+        status: false,
+        msg: "You are not allowed to delete the group",
+      });
+
+    const members = chat.members;
+
+    // Here we have to delete all the messages and attachments from cloudnary
+
+    const messageWithAttachments = await Message.find({
+      chat: chatId,
+      attachments: { $exists: true, $ne: [] },
+    });
+
+    const public_ids = [];
+
+    messageWithAttachments.forEach(({ attachments }) => {
+      attachments.forEach(({ public_id }) => {
+        public_ids.push(public_id);
+      });
+    });
+
+    await Promise.all([
+      // DELETE FILES FROM cloudnary
+      deleteFilesFromCloudnary(public_ids),
+      chat.deleteOne(),
+      Message.deleteMany({ chat: chatId }),
+    ]);
+
+    // await chat.remove();
+
+    // await chat.save();
+
+    emitEvent(req, REFETCH_CHATS, chat.members);
+
+    return res.status(200).json({
+      status: true,
+      msg: "Chat deleted successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports.getMessages = async (req, res, next) => {
+  try {
+    const chatId = req.params.id;
+
+    const { page = 1 } = req.query;
+
+    const resultPerPage = 20;
+    const skip = (page - 1) * resultPerPage;
+
+    const [messages, totalMessagesCount] = await Promise.all([
+      Message.find({ chat: chatId })
+        .sort({
+          createdAt: -1,
+        })
+        .skip(skip)
+        .limit(resultPerPage)
+        .populate("sender", "name avatar")
+        .lean(),
+      Message.countDocuments({ chat: chatId }),
+    ]);
+
+    const totalPages = Math.ceil(totalMessagesCount / resultPerPage);
+
+    // emitEvent(req, REFETCH_CHATS, chat.members);
+
+    return res.status(200).json({
+      status: true,
+      msg: messages.reverse(),
+      totalPages,
     });
   } catch (error) {
     next(error);

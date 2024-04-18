@@ -1,9 +1,12 @@
 const {
   register,
-  uploadpic,
   getAllUsers,
   getMyProfile,
   logout,
+  searchUser,
+  sendFriendRequest,
+  acceptFriendRequest,
+  getMyNotifications,
 } = require("../controllers/userControllers");
 const { login } = require("../controllers/userControllers");
 const isAuthenticated = require("../middlewares/auth");
@@ -23,6 +26,16 @@ router.get("/me", getMyProfile);
 
 router.get("/logout", logout);
 
+router.get("/search", searchUser);
+
+router.put("/sendRequest", sendFriendRequest);
+
+router.put("/acceptRequest", acceptFriendRequest);
+
+router.get("/notifications", getMyNotifications);
+
+router.get("/allusers/:id", getAllUsers);
+
 // /////////////////////////////////////////////////////////////////////////////
 
 // const storage = multer.diskStorage({
@@ -38,7 +51,5 @@ router.get("/logout", logout);
 // const upload = multer({ storage: storage });
 
 // router.post("/uploadpic", upload.single("image"), uploadpic);
-
-router.get("/allusers/:id", getAllUsers);
 
 module.exports = router;

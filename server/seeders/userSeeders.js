@@ -1,5 +1,9 @@
+const { create } = require("../model/chatModel");
+const { faker, simpleFaker } = require("@faker-js/faker");
+
 const User = require("../model/userModel");
-const { faker } = require("@faker-js/faker");
+const Chat = require("../model/chatModel");
+const Message = require("../model/messageModel");
 
 const createUser = async (numUsers) => {
   try {
@@ -25,4 +29,6 @@ const createUser = async (numUsers) => {
   } catch (error) {}
 };
 
-module.exports = createUser;
+module.exports = {
+  createUser,
+};

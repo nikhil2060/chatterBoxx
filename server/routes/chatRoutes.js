@@ -7,6 +7,9 @@ const {
   leaveGroup,
   sendAttachments,
   getChatDetails,
+  renameGroup,
+  deleteChat,
+  getMessages,
 } = require("../controllers/chatControllers");
 const { getMyProfile } = require("../controllers/userControllers");
 const isAuthenticated = require("../middlewares/auth");
@@ -30,6 +33,8 @@ router.delete("/leave/:id", leaveGroup);
 
 router.post("/message", attachmentsMulter, sendAttachments);
 
-router.route("/:id").get(getChatDetails).put().delete();
+router.get("/message/:id", getMessages);
+
+router.route("/:id").get(getChatDetails).put(renameGroup).delete(deleteChat);
 
 module.exports = router;

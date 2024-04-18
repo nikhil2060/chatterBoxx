@@ -25,4 +25,13 @@ const emitEvent = (req, event, users, data) => {
   console.log("Emittting Event ...");
 };
 
-module.exports = { sendToken, cookieOptions, emitEvent };
+const deleteFilesFromCloudnary = async (public_id) => {
+  // Delete files from cloudnaty
+};
+
+module.exports = {
+  sendToken,
+  cookieOptions,
+  emitEvent,
+  deleteFilesFromCloudnary,
+};

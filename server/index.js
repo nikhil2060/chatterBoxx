@@ -6,7 +6,13 @@ const cookieParser = require("cookie-parser");
 
 const userRoutes = require("./routes/userRoutes");
 const chatRoutes = require("./routes/chatRoutes");
-const createUser = require("./seeders/userSeeders");
+
+const {
+  createUser,
+  createGroupChats,
+  createSingleChats,
+  createMessagesInAChat,
+} = require("./seeders/chatSeeders");
 
 require("dotenv").config();
 
@@ -31,6 +37,10 @@ mongoose
   });
 
 // createUser(10);
+
+// createSingleChats(10);
+// createGroupChats(10);
+// createMessagesInAChat("661a19d630dd1234540672a1", 10);
 
 // app.use("/api/auth", userRoutes);
 
