@@ -9,7 +9,14 @@ const { getOtherMembers } = require("../lib/helper");
 
 module.exports.register = async (req, res, next) => {
   try {
-    const { name, username, email, password, avatar, bio } = req.body;
+    const { name, username, email, password, bio } = req.body;
+
+    const file = req.file;
+
+    if (!file)
+      return res
+        .status(400)
+        .json({ msg: "Please Upload Avatar", status: false });
 
     const usernameCheck = await User.findOne({ username });
 

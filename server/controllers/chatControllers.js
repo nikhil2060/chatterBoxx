@@ -279,6 +279,14 @@ module.exports.sendAttachments = async (req, res, next) => {
   try {
     const { chatId, userId } = req.body;
 
+    const files = req.files || [];
+
+    if (files.length < 1)
+      return res.status(400).json("Please provide attachments");
+
+    if (files.length > 5)
+      return res.status(400).json("Files cannot be more than 5");
+
     const [chat, me] = await Promise.all([
       Chat.findById(chatId),
       User.findById(req.user, "name"),
@@ -289,11 +297,6 @@ module.exports.sendAttachments = async (req, res, next) => {
         status: false,
         msg: "No Chat Found",
       });
-
-    const files = req.files || [];
-
-    if (files.length < 1)
-      return res.status(400).json("Please provide attachments");
 
     // UPLOAD FILES
     const attachments = ["lol", "lol", "lol", "lol"];
