@@ -1,5 +1,4 @@
 const express = require("express");
-const app = express();
 const cors = require("cors");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
@@ -7,12 +6,20 @@ const cookieParser = require("cookie-parser");
 const userRoutes = require("./routes/userRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 
+const { Server } = require("socket.io");
+const { createServer } = require("http");
+
 const {
   createUser,
   createGroupChats,
   createSingleChats,
   createMessagesInAChat,
 } = require("./seeders/chatSeeders");
+const { create } = require("./model/userModel");
+
+const app = express();
+const server = createServer(app);
+const io = new Server(server, {});
 
 require("dotenv").config();
 
@@ -44,7 +51,17 @@ mongoose
 
 // app.use("/api/auth", userRoutes);
 
-const server = app.listen(process.env.PORT, () => {
+io.on("connection", (socket) => {
+  socket.on("connection", () => {
+    console.log("User Connected", socket.id);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("User disconnected", socket.id);
+  });
+});
+
+server.listen(process.env.PORT, () => {
   console.log(
     `Server started on ${process.env.PORT} in ${process.env.NODE_ENV} Mode`
   );
