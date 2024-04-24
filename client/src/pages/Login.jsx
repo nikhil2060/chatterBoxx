@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { loginRoute } from "../utils/ApiRoutes";
+import { loginRoute } from "../utils/AuthRoutes";
 import { Link, useNavigate } from "react-router-dom";
 
 function Login() {
@@ -38,18 +38,9 @@ function Login() {
 
         const data = await response.json();
 
-        // console.log(data);
-        // console.log(data.user._id);
-
-        if (data && data.status === true) {
-          localStorage.setItem("chat-app-user", JSON.stringify(data.user));
-          toast("Login succesfull");
-          navigate(`/chat/${data.user._id}`);
-        } else {
-          toast.error(data.msg);
+        if (data.status === true) {
+          // navigate("/");
         }
-
-        // navigate("/");
       } catch (error) {
         console.error(error);
       }
@@ -107,7 +98,7 @@ function Login() {
         </form>
         <span className="text-zinc-500 text-sm mb-6">
           Dont have an account ?{" "}
-          <Link to="/signup" className="text-blue-400">
+          <Link to="/register" className="text-blue-400">
             Create One.
           </Link>
         </span>

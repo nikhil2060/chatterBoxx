@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { registerRoute } from "../utils/ApiRoutes";
+import { registerRoute } from "../utils/AuthRoutes";
 import { Link, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+
 function Register() {
   const [newUserData, setNewUserData] = useState({
     name: "",
@@ -11,34 +13,30 @@ function Register() {
     password: "",
   });
 
+  const { register, handleSubmit, getValues } = useForm();
+
   const navigate = useNavigate();
 
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [cpassword, setCPassword] = useState("");
+  const afterSubmit = async (data) => {
+    const formData = new FormData();
 
-  // useEffect(() => {
-  //   if (localStorage.getItem("chat-app-user")) {
-  //     navigate("/");
-  //   }
-  // }, [navigate]);
+    // Append fields other than the file
+    formData.append("name", data.name);
+    formData.append("username", data.username);
+    formData.append("email", data.email);
+    formData.append("password", data.password);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+    formData.append("avatar", data.avatar[0]);
 
-    if (handleValidation()) {
+    if (handleValidation(data)) {
       try {
         const response = await fetch(registerRoute, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ username, email, password }),
+          body: formData,
         });
 
         if (!response.ok) {
-          const errorData = await response.json();
+          const errorData = await response.json(data);
 
           toast.error(errorData.msg);
           return;
@@ -47,17 +45,20 @@ function Register() {
         const data = await response.json();
 
         if (data.status === true) {
-          localStorage.setItem("chat-app-user", JSON.stringify(data.user));
+          // navigate("/");
         }
-
-        navigate(`/setavatar/${data.user._id}`);
       } catch (error) {
-        console.error(error);
+        toast.error(error);
+        console.log(error);
       }
     }
   };
 
-  function handleValidation() {
+  const onError = (errors) => {
+    console.log(errors);
+  };
+
+  function handleValidation({ username, email, password, cpassword }) {
     let isValid = true;
 
     // Validation checks
@@ -95,41 +96,60 @@ function Register() {
 
   return (
     <div className="w-full h-screen flex items-center justify-center text-zinc-800 bg-contain bg-no-repeat bg-center bg-gradient-to-r from-rose-50 to-teal-50">
-      <div className="w-[22rem] h-[30rem] flex flex-col items-center rounded-xl bg-zinc-50 shadow-[rgba(13,_38,_76,_0.5)_0px_9px_20px] ">
+      <div className="w-[22rem] h-[40rem] flex flex-col items-center rounded-xl bg-zinc-50 shadow-[rgba(13,_38,_76,_0.5)_0px_9px_20px] ">
         <h1 className="py-5 mt-[3px] text-xl font-medium text-zinc-800">
           Signup
         </h1>
         <form
-          className="flex flex-col gap-8 items-center px-10 w-full h-full mt-1"
-          onSubmit={handleSubmit}
+          className="flex flex-col gap-6 items-center px-10 w-full h-full mt-1"
+          onSubmit={handleSubmit(afterSubmit, onError)}
         >
+          <PhotoDiv>
+            <PhotoLabel htmlFor="avatar" className="bg-red-200"></PhotoLabel>
+            <PhotoInput
+              type="file"
+              id="avatar"
+              {...register("avatar", { required: "this is required" })}
+            />
+          </PhotoDiv>
+          <Input
+            type="text"
+            placeholder="Name"
+            id="name"
+            {...register("name", { required: "this is required" })}
+          />
+
           <Input
             type="text"
             placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            id="username"
+            {...register("username", { required: "this is required" })}
           />
+
           <Input
             type="email"
             required
             placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            id="email"
+            {...register("email", { required: "this is required" })}
           />
+
           <Input
             type="password"
             required
             placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            id="password"
+            {...register("password", { required: "this is required" })}
           />
+
           <Input
             type="password"
             required
             placeholder="Confirm Password"
-            value={cpassword}
-            onChange={(e) => setCPassword(e.target.value)}
+            id="cpassword"
+            {...register("cpassword", { required: "this is required" })}
           />
+
           <Button className="rounded-[10px] p-2 text-zinc-50">Register</Button>
         </form>
 
@@ -156,6 +176,32 @@ const Input = styled.input`
   font-size: 12px;
   border: 1.2px solid #3e3e3e;
   box-shadow: 0px 10px 20px 1px #3333331d;
+`;
+
+const PhotoInput = styled.input`
+  display: none; /* Hide the input */
+`;
+
+const PhotoLabel = styled.label`
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  font-weight: 400;
+  font-size: 12px;
+  border: 1.2px solid #3e3e3e;
+  background-image: url("/userIcon.jpeg");
+  background-size: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+`;
+
+const PhotoDiv = styled.div`
+  width: 100px;
+  height: 100px;
+  overflow: hidden;
 `;
 
 const Button = styled.button`

@@ -42,6 +42,8 @@ module.exports.register = async (req, res, next) => {
 
     sendToken(res, user, 201, "userCreated");
 
+    console.log("user created succesfuly");
+
     // return res.json({ status: true, user });
 
     // return res.status(201).json({ message: "user created succesfuly" });
@@ -52,8 +54,6 @@ module.exports.register = async (req, res, next) => {
 
 module.exports.login = async (req, res, next) => {
   try {
-    // console.log(req.body);
-
     const { username, password } = req.body;
 
     const user = await User.findOne({ username }).select("+password");
@@ -64,10 +64,12 @@ module.exports.login = async (req, res, next) => {
 
     // const isValidPassword = await bcrypt.compare(password, user.password);
 
-    // if (!isValidPassword)
-    //   return res.json({ msg: "Incorrect Password", status: false });
+    const isValidPassword = password === user.password;
 
-    // delete user.password;
+    if (!isValidPassword)
+      return res.json({ msg: "Incorrect Password", status: false });
+
+    delete user.password;
 
     sendToken(res, user, 201, `Welcome back ${user.name}`);
 

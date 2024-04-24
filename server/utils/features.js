@@ -18,7 +18,7 @@ const sendToken = (res, user, code, message) => {
   return res
     .status(code)
     .cookie("chatterBox-token", token, cookieOptions)
-    .json({ msg: message, success: true });
+    .json({ msg: message, status: true });
 };
 
 const emitEvent = (req, event, users, data) => {
