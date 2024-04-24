@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { allUserRoute } from "../utils/AuthRoutes";
+import { allUserRoute } from "../utils/ApiRoutes";
 
 import { useContacts } from "../contexts/UsersContext";
 import { CircularProgress } from "@mui/material";

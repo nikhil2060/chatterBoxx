@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Buffer } from "buffer";
 import axios from "axios";
 import styled from "styled-components";
-import { uploadPic } from "../utils/AuthRoutes";
+import { uploadPic } from "../utils/ApiRoutes";
 import { toast } from "react-toastify";
 import { Smiley, Heart, Horse, CameraPlus } from "@phosphor-icons/react";
 

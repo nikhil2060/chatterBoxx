@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { loginRoute } from "../utils/AuthRoutes";
+import { loginRoute } from "../utils/ApiRoutes";
 import { Link, useNavigate } from "react-router-dom";
 
 function Login() {
