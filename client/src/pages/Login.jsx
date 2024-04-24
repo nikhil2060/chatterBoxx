@@ -40,6 +40,8 @@ function Login() {
 
         if (data.status === true) {
           // navigate("/");
+          console.log(data);
+          console.log("Login successfull");
         }
       } catch (error) {
         console.error(error);

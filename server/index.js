@@ -13,13 +13,13 @@ const { createServer } = require("http");
 
 const { v4: uuid } = require("uuid");
 
-const {
-  createUser,
-  createGroupChats,
-  createSingleChats,
-  createMessagesInAChat,
-} = require("./seeders/chatSeeders");
-const { create } = require("./model/userModel");
+// const {
+//   createUser,
+//   createGroupChats,
+//   createSingleChats,
+//   createMessagesInAChat,
+// } = require("./seeders/chatSeeders");
+
 const { NEW_MESSAGE, NEW_MESSAGE_ALERT } = require("./constants/events");
 const { getSockets } = require("./middlewares/helper");
 
@@ -29,7 +29,17 @@ const io = new Server(server, {});
 
 require("dotenv").config();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:4173",
+      process.env.CLIENT_URL,
+    ],
+    credentials: true,
+  })
+);
+
 app.use(express.json()); //middleware parses the JSON data
 app.use(cookieParser());
 
@@ -55,7 +65,6 @@ mongoose
 // createGroupChats(10);
 // createMessagesInAChat("661a19d630dd1234540672a1", 10);
 
-// app.use("/api/auth", userRoutes);
 const userSocketIDs = new Map();
 
 // io.use((socket, next) => {});

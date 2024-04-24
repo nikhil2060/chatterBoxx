@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -11,8 +11,17 @@ import GlobalStyles from "./styles/GlobalStyles";
 import Home from "./pages/Home";
 import Chat from "./pages/Chat";
 import { UsersProvider } from "./contexts/UsersContext";
+import axios from "axios";
+import { getMyProfileRoute } from "./utils/AuthRoutes";
 
 function App() {
+  // useEffect(() => {
+  //   axios
+  //     .get(getMyProfileRoute)
+  //     .then((res) => console.log(res))
+  //     .catch((err) => console.error(err));
+  // }, []);
+
   return (
     <UsersProvider>
       <BrowserRouter>

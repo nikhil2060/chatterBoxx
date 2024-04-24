@@ -9,7 +9,9 @@ const {
   getMyNotifications,
   getMyFriends,
 } = require("../controllers/userControllers");
+
 const { login } = require("../controllers/userControllers");
+
 const isAuthenticated = require("../middlewares/auth");
 // const multer = require("multer");
 const { singleAvatar } = require("../middlewares/multer");
@@ -17,9 +19,10 @@ const { singleAvatar } = require("../middlewares/multer");
 const router = require("express").Router();
 
 router.post("/register", singleAvatar, register);
+
 router.post("/login", login);
 
-// AFTER THIS USER MUST BE LOGGED IN
+// AFTER THIS USER MUST BE LOGGED IN \
 
 router.use(isAuthenticated);
 
