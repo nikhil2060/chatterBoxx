@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { registerRoute } from "../utils/ApiRoutes";
+import { registerRoute } from "../utils/AuthRoutes";
 import { Link, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+
 function Register() {
   const [newUserData, setNewUserData] = useState({
     name: "",
@@ -13,18 +15,15 @@ function Register() {
 
   const navigate = useNavigate();
 
+  const [name, setNAme] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [cpassword, setCPassword] = useState("");
 
-  // useEffect(() => {
-  //   if (localStorage.getItem("chat-app-user")) {
-  //     navigate("/");
-  //   }
-  // }, [navigate]);
+  const { register, handleSubmit, reset, getValues, formState } = useForm();
 
-  const handleSubmit = async (e) => {
+  const afterSubmit = async (e) => {
     e.preventDefault();
 
     if (handleValidation()) {
@@ -50,7 +49,7 @@ function Register() {
           localStorage.setItem("chat-app-user", JSON.stringify(data.user));
         }
 
-        navigate(`/setavatar/${data.user._id}`);
+        // navigate(`/setavatar/${data.user._id}`);
       } catch (error) {
         console.error(error);
       }
@@ -93,6 +92,10 @@ function Register() {
     return isValid;
   }
 
+  const onError = (errors) => {
+    console.log(errors);
+  };
+
   return (
     <div className="w-full h-screen flex items-center justify-center text-zinc-800 bg-contain bg-no-repeat bg-center bg-gradient-to-r from-rose-50 to-teal-50">
       <div className="w-[22rem] h-[30rem] flex flex-col items-center rounded-xl bg-zinc-50 shadow-[rgba(13,_38,_76,_0.5)_0px_9px_20px] ">
@@ -101,8 +104,15 @@ function Register() {
         </h1>
         <form
           className="flex flex-col gap-8 items-center px-10 w-full h-full mt-1"
-          onSubmit={handleSubmit}
+          onSubmit={handleSubmit(afterSubmit, onError)}
         >
+          <Input
+            type="text"
+            placeholder="Name"
+            value={name}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+
           <Input
             type="text"
             placeholder="Username"

@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { useReducer } from "react";
 import { createContext } from "react";
 import { useContext } from "react";
-import { allUserRoute } from "../utils/ApiRoutes";
+import { allUserRoute } from "../utils/AuthRoutes";
 
 const UsersContext = createContext();
 

@@ -20,7 +20,7 @@ function App() {
         <Routes>
           {/* <Route index element={<LandingPage />}></Route> */}
           <Route path="chat/:userId" element={<Chat />}></Route>
-          <Route path="signup" element={<Register />}></Route>
+          <Route path="register" element={<Register />}></Route>
           <Route path="/" element={<Login />}></Route>
           <Route path="login" element={<Login />}></Route>
           <Route path="setavatar/:userId" element={<SetAvatar />}></Route>

@@ -6,8 +6,12 @@ const cookieParser = require("cookie-parser");
 const userRoutes = require("./routes/userRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 
+const Message = require("./model/messageModel");
+
 const { Server } = require("socket.io");
 const { createServer } = require("http");
+
+const { v4: uuid } = require("uuid");
 
 const {
   createUser,
@@ -16,6 +20,8 @@ const {
   createMessagesInAChat,
 } = require("./seeders/chatSeeders");
 const { create } = require("./model/userModel");
+const { NEW_MESSAGE, NEW_MESSAGE_ALERT } = require("./constants/events");
+const { getSockets } = require("./middlewares/helper");
 
 const app = express();
 const server = createServer(app);
@@ -50,14 +56,55 @@ mongoose
 // createMessagesInAChat("661a19d630dd1234540672a1", 10);
 
 // app.use("/api/auth", userRoutes);
+const userSocketIDs = new Map();
+
+// io.use((socket, next) => {});
 
 io.on("connection", (socket) => {
-  socket.on("connection", () => {
-    console.log("User Connected", socket.id);
+  const user = {
+    _id: 123124124,
+    name: "nikhil",
+  };
+
+  userSocketIDs.set(user._id.toString(), socket.id);
+
+  console.log("User Connected", socket.id);
+
+  socket.on(NEW_MESSAGE, async ({ chatId, members, message }) => {
+    const messageForRealtime = {
+      content: message,
+      _id: uuid(),
+      sender: {
+        _id: user._id,
+        name: user.name,
+      },
+      chat: chatId,
+      createdAt: new Date().toISOString(),
+    };
+
+    const messageForDB = {
+      content: message,
+      sender: user._id,
+      chat: chatId,
+    };
+
+    const userSocketsActive = getSockets(members);
+
+    io.to(userSocketsActive).emit(NEW_MESSAGE, {
+      chatId,
+      message: messageForRealtime,
+    });
+
+    io.to(userSocketsActive).emit(NEW_MESSAGE_ALERT, {
+      chatId,
+    });
+
+    await Message.create(messageForDB);
   });
 
   socket.on("disconnect", () => {
     console.log("User disconnected", socket.id);
+    userSocketIDs.delete(user._id.toString());
   });
 });
 
@@ -66,3 +113,5 @@ server.listen(process.env.PORT, () => {
     `Server started on ${process.env.PORT} in ${process.env.NODE_ENV} Mode`
   );
 });
+
+module.exports = userSocketIDs;
