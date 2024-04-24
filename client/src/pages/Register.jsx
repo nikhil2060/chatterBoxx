@@ -6,7 +6,7 @@ import { registerRoute } from "../utils/ApiRoutes";
 import { Link, useNavigate } from "react-router-dom";
 function Register() {
   const [newUserData, setNewUserData] = useState({
-    name: "n",
+    name: "",
     email: "",
     password: "",
   });
