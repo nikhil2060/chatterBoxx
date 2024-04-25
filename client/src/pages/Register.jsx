@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
-import styled from "styled-components";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import styled from "styled-components";
 import { registerRoute } from "../utils/AuthRoutes";
-import { Link, useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
 
 function Register() {
   const [newUserData, setNewUserData] = useState({
@@ -26,12 +26,16 @@ function Register() {
     formData.append("email", data.email);
     formData.append("password", data.password);
 
-    formData.append("avatar", data.avatar[0]);
+    // formData.append("avatar", data.avatar[0]);
+    formData.append("avatar", data.avatar.file);
 
     if (handleValidation(data)) {
       try {
         const response = await fetch(registerRoute, {
           method: "POST",
+          headers: {
+            "content-type": " multipart/form-data",
+          },
           body: formData,
         });
 

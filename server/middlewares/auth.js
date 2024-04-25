@@ -4,8 +4,6 @@ const isAuthenticated = async (req, res, next) => {
   try {
     const token = req.cookies["chatterBox-token"];
 
-    // console.log(token);
-
     if (!token)
       res.json({ status: false, msg: "Please login to access this route" });
 

@@ -15,12 +15,14 @@ import axios from "axios";
 import { getMyProfileRoute } from "./utils/AuthRoutes";
 
 function App() {
-  // useEffect(() => {
-  //   axios
-  //     .get(getMyProfileRoute)
-  //     .then((res) => console.log(res))
-  //     .catch((err) => console.error(err));
-  // }, []);
+  useEffect(() => {
+    axios
+      .get(getMyProfileRoute, {
+        withCredentials: true,
+      })
+      .then((res) => console.log(res))
+      .catch((err) => console.error(err));
+  }, []);
 
   return (
     <UsersProvider>
