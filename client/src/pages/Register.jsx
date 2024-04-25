@@ -7,13 +7,11 @@ import styled from "styled-components";
 import { registerRoute } from "../utils/AuthRoutes";
 
 function Register() {
-  const [newUserData, setNewUserData] = useState({
-    name: "",
-    email: "",
-    password: "",
-  });
+  const [isRegistering, setIsRegistering] = useState(false);
 
-  const { register, handleSubmit, getValues } = useForm();
+  const { register, handleSubmit, formState, reset } = useForm();
+
+  const { isSubmitting, isSubmitted } = formState;
 
   const navigate = useNavigate();
 
@@ -32,6 +30,10 @@ function Register() {
 
     if (handleValidation(data)) {
       try {
+        toast("Registering the user", {
+          autoClose: 5000,
+        });
+
         const response = await fetch(registerRoute, {
           method: "POST",
           body: formData,
@@ -41,22 +43,22 @@ function Register() {
         if (!response.ok) {
           const errorData = await response.json(data);
 
-          console.log(errorData);
-
           toast.error(errorData.msg);
+
           return;
         }
-
-        console.log(response);
 
         const responseData = await response.json();
 
         if (responseData.status === true) {
           // navigate("/");
+          toast.success(responseData.msg);
         }
       } catch (error) {
         toast.error(error);
         console.log(error);
+      } finally {
+        reset();
       }
     }
   };
@@ -167,7 +169,6 @@ function Register() {
           </Link>
         </span>
       </div>
-      <ToastContainer />
     </div>
   );
 }

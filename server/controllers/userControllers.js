@@ -20,13 +20,10 @@ module.exports.register = async (req, res, next) => {
     const file = req.file;
 
     if (!file)
-      return res
-        .status(400)
-        .json({
-          msg: "Please Upload Avatar babu",
-          status: false,
-          req: req.body,
-        });
+      return res.status(400).json({
+        msg: "Please Upload Avatar babu",
+        status: false,
+      });
 
     const usernameCheck = await User.findOne({ username });
 
@@ -58,7 +55,7 @@ module.exports.register = async (req, res, next) => {
 
     delete user.password;
 
-    sendToken(res, user, 201, "userCreated");
+    sendToken(res, user, 201, "User registered successfully");
 
     console.log("user created succesfuly");
 

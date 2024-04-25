@@ -13,6 +13,7 @@ import Chat from "./pages/Chat";
 import { UsersProvider } from "./contexts/UsersContext";
 import axios from "axios";
 import { getMyProfileRoute } from "./utils/AuthRoutes";
+import { ToastContainer } from "react-toastify";
 
 function App() {
   // useEffect(() => {
@@ -38,6 +39,19 @@ function App() {
           {/* <Route path="photopicker" element={<PhotoPicker />}></Route> */}
         </Routes>
       </BrowserRouter>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition:Bounce
+      />
     </UsersProvider>
   );
 }
