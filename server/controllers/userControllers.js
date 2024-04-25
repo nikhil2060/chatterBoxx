@@ -14,7 +14,6 @@ const { getOtherMembers } = require("../lib/helper");
 
 module.exports.register = async (req, res, next) => {
   try {
-    console.log(req.body);
     const { name, username, email, password, bio } = req.body;
 
     const file = req.file;
@@ -51,17 +50,9 @@ module.exports.register = async (req, res, next) => {
       },
     });
 
-    console.log(user);
-
     delete user.password;
 
     sendToken(res, user, 201, "User registered successfully");
-
-    console.log("user created succesfuly");
-
-    // return res.json({ status: true, user });
-
-    // return res.status(201).json({ message: "user created succesfuly" });
   } catch (error) {
     next(error);
   }
