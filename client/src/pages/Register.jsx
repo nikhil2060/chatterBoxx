@@ -18,6 +18,7 @@ function Register() {
   const navigate = useNavigate();
 
   const afterSubmit = async (data) => {
+    console.log(data);
     const formData = new FormData();
 
     // Append fields other than the file
@@ -27,28 +28,30 @@ function Register() {
     formData.append("password", data.password);
 
     // formData.append("avatar", data.avatar[0]);
-    formData.append("avatar", data.avatar.file);
+    formData.append("avatar", data.avatar[0]);
 
     if (handleValidation(data)) {
       try {
         const response = await fetch(registerRoute, {
           method: "POST",
-          headers: {
-            "content-type": " multipart/form-data",
-          },
           body: formData,
+          credentials: "include",
         });
 
         if (!response.ok) {
           const errorData = await response.json(data);
 
+          console.log(errorData);
+
           toast.error(errorData.msg);
           return;
         }
 
-        const data = await response.json();
+        console.log(response);
 
-        if (data.status === true) {
+        const responseData = await response.json();
+
+        if (responseData.status === true) {
           // navigate("/");
         }
       } catch (error) {

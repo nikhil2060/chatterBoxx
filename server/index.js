@@ -13,6 +13,8 @@ const { createServer } = require("http");
 
 const { v4: uuid } = require("uuid");
 
+const { v2: cloudnary } = require("cloudinary");
+
 // const {
 //   createUser,
 //   createGroupChats,
@@ -44,8 +46,6 @@ app.use(express.json()); //middleware parses the JSON data
 app.use(cookieParser());
 
 // app.use(express.urlencoded({ extended: false }));
-app.use("/api/auth/user", userRoutes);
-app.use("/api/chat", chatRoutes);
 
 mongoose
   .connect(process.env.MONGO_URL, {
@@ -58,6 +58,15 @@ mongoose
   .catch((err) => {
     console.log(err.message);
   });
+
+cloudnary.config({
+  cloud_name: process.env.CLOUDNARY_CLOUD_NAME,
+  api_key: process.env.CLOUDNARY_API_KEY,
+  api_secret: process.env.CLOUDNARY_API_SECRET,
+});
+
+app.use("/api/auth/user", userRoutes);
+app.use("/api/chat", chatRoutes);
 
 // createUser(10);
 

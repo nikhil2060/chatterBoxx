@@ -3,12 +3,18 @@ const Chat = require("../model/chatModel");
 const Request = require("../model/requestModel");
 
 const bcrypt = require("bcrypt");
-const { sendToken, cookieOptions, emitEvent } = require("../utils/features");
+const {
+  sendToken,
+  cookieOptions,
+  emitEvent,
+  uploadFilesToCloudnary,
+} = require("../utils/features");
 const { NEW_REQUEST, REFETCH_CHATS } = require("../constants/events");
 const { getOtherMembers } = require("../lib/helper");
 
 module.exports.register = async (req, res, next) => {
   try {
+    console.log(req.body);
     const { name, username, email, password, bio } = req.body;
 
     const file = req.file;
@@ -16,7 +22,11 @@ module.exports.register = async (req, res, next) => {
     if (!file)
       return res
         .status(400)
-        .json({ msg: "Please Upload Avatar", status: false });
+        .json({
+          msg: "Please Upload Avatar babu",
+          status: false,
+          req: req.body,
+        });
 
     const usernameCheck = await User.findOne({ username });
 
@@ -30,13 +40,21 @@ module.exports.register = async (req, res, next) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    const result = await uploadFilesToCloudnary([file]);
+
     const user = await User.create({
       name,
       email,
       username,
       password: hashedPassword,
       bio,
+      avatar: {
+        public_id: result[0]?.public_id,
+        url: result[0]?.url,
+      },
     });
+
+    console.log(user);
 
     delete user.password;
 
@@ -128,10 +146,12 @@ module.exports.getAllUsers = async (req, res, next) => {
 };
 
 module.exports.getMyProfile = async (req, res, next) => {
+  const user = User.findById(req.user);
+
   try {
     return res.status(200).json({
       success: true,
-      data: req.user,
+      data: user,
     });
   } catch (error) {
     next(RangeError);
