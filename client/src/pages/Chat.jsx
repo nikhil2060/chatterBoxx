@@ -3,8 +3,6 @@ import React, { useState } from "react";
 import ContactsContainer from "../comp/ContactsContainer";
 import { useContacts } from "../contexts/UsersContext";
 
-// import image from "../../../server/uploads/170917084085530743.jpg";
-
 function Chat() {
   return (
     <div className="page w-full h-[100vh] bg-red-200 flex items-center justify-center bg-gradient-to-r from-rose-50 to-teal-50">
