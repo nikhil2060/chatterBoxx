@@ -4,12 +4,12 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { loginRoute } from "../utils/AuthRoutes";
 import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { userExists, userNotExists } from "../redux/reducer/auth";
 
 function Login() {
-  const [newUserData, setNewUserData] = useState({
-    name: "",
-    password: "",
-  });
+  const { user, isLoggedIn } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
 
   const navigate = useNavigate();
 
@@ -32,7 +32,7 @@ function Login() {
 
         if (!response.ok) {
           const errorData = await response.json();
-
+          dispatch(userNotExists());
           toast.error(errorData.msg);
           return;
         }
@@ -42,7 +42,13 @@ function Login() {
         if (data.status === true) {
           // navigate("/");
           console.log(data);
+          dispatch(userExists(data.user));
           console.log("Login successfull");
+          toast.success("Login successfull");
+          navigate(`/chat/${data.user._id}`);
+        } else {
+          dispatch(userExists());
+          toast.error(`Login failed ${data.msg}`);
         }
       } catch (error) {
         console.error(error);

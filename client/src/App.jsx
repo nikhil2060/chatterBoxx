@@ -1,33 +1,47 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
-import SetAvatar from "./comp/SetAvatar";
+import { useDispatch, useSelector } from "react-redux";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 import { UsersProvider } from "./contexts/UsersContext";
 import Chat from "./pages/Chat";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import GlobalStyles from "./styles/GlobalStyles";
 
+import axios from "axios";
+import { useEffect } from "react";
+import { userExists, userNotExists } from "./redux/reducer/auth";
+import { getMyProfileRoute } from "./utils/AuthRoutes";
+
 function App() {
-  // useEffect(() => {
-  //   axios
-  //     .get(getMyProfileRoute, {
-  //       withCredentials: true,
-  //     })
-  //     .then((res) => console.log(res))
-  //     .catch((err) => console.error(err));
-  // }, []);
+  const { user } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    axios
+      .get(getMyProfileRoute, {
+        withCredentials: true,
+      })
+      .then(({ data }) => {
+        if (!data.status) {
+          toast.error(data.msg);
+          dispatch(userNotExists());
+        } else {
+          dispatch(userExists(data.user));
+        }
+      })
+      .catch((err) => dispatch(userNotExists()));
+  }, [dispatch]);
 
   return (
     <UsersProvider>
       <BrowserRouter>
         <GlobalStyles />
+        {user && <Navigate to={`/chat/${user._id}`} />}
         <Routes>
-          {/* <Route index element={<LandingPage />}></Route> */}
-          <Route path="chat/:userId" element={<Chat />}></Route>
+          <Route path="chat/:chatId" element={<Chat />} />
           <Route path="register" element={<Register />}></Route>
-          <Route path="/" element={<Login />}></Route>
-          <Route path="login" element={<Login />}></Route>
-          <Route path="setavatar/:userId" element={<SetAvatar />}></Route>
+          <Route index element={<Login />}></Route>
+          <Route path="login" element={<Login />} />
         </Routes>
       </BrowserRouter>
       <ToastContainer

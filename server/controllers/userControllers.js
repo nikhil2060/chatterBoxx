@@ -20,7 +20,7 @@ module.exports.register = async (req, res, next) => {
 
     if (!file)
       return res.status(400).json({
-        msg: "Please Upload Avatar babu",
+        msg: "Please Upload Avatar",
         status: false,
       });
 
@@ -63,8 +63,6 @@ module.exports.login = async (req, res, next) => {
     const { username, password } = req.body;
 
     const user = await User.findOne({ username }).select("+password");
-
-    // console.log(user);
 
     if (!user) return res.json({ msg: "Incorrect Username", status: false });
 
@@ -134,12 +132,18 @@ module.exports.getAllUsers = async (req, res, next) => {
 };
 
 module.exports.getMyProfile = async (req, res, next) => {
-  const user = User.findById(req.user);
-
   try {
+    const user = await User.findById(req.user);
+
+    if (!user)
+      return res.status(400).json({
+        status: false,
+        msg: "User not exists",
+      });
+
     return res.status(200).json({
-      success: true,
-      data: user,
+      status: true,
+      user,
     });
   } catch (error) {
     next(RangeError);
