@@ -52,4 +52,4 @@ const miscSlice = createSlice({
 
 export default miscSlice;
 
-export const { setIsNewGroup, setIsAddMember } = miscSlice.actions;
+export const { setIsNewGroup, setIsAddMember, setIsSearch } = miscSlice.actions;

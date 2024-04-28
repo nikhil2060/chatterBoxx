@@ -1,35 +1,30 @@
 import { PaperPlaneRight, Paperclip } from "@phosphor-icons/react";
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import ContactsContainer from "../comp/ContactsContainer";
 import { useContacts } from "../contexts/UsersContext";
+import { userNotExists } from "../redux/reducer/authSlice";
 import { logOutRoute } from "../utils/AuthRoutes";
-import axios from "axios";
-import { userExists, userNotExists } from "../redux/reducer/authSlice";
-import { useGetMyChats } from "../features/chatFeatures/useGetMyChats";
-import { getMyChats } from "../services/apiChat";
 
 function Chat() {
   const { user, isLoggedIn } = useSelector((state) => state.auth);
 
+  const { isSearch } = useSelector((state) => state.misc);
+
   const navigate = useNavigate();
 
-  // if (isLoading) console.log("Loading...");
-
-  // console.log(myChats);
-
-  // useEffect(() => {
-  //   if (!user) {
-  //     // toast.error("Please Log in to your account");
-  //     console.error("Please login to your account");
-  //     navigate("/login");
-  //   }
-  // }, [user, navigate]);
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+    }
+  }, [user, navigate]);
 
   return (
-    <div className="page w-full h-[100vh] bg-red-200 flex items-center justify-center bg-gradient-to-r from-rose-50 to-teal-50">
+    <div className="w-full h-[100vh] bg-red-200 flex items-center justify-center bg-gradient-to-r from-rose-50 to-teal-50">
+      {isSearch && <div>Search Container</div>}
       <div
         className="chat-container w-5/6 h-5/6 bg-[#B3D4F2] rounded-[2rem]
       flex gap-[1.25rem] p-5 shadow-[0_3px_10px_rgb(0,0,0,0.2)]"

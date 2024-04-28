@@ -1,14 +1,26 @@
 import { BellRinging, UserCirclePlus, UsersThree } from "@phosphor-icons/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import { CircularProgress } from "@mui/material";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useGetMyChats } from "../features/chatFeatures/useGetMyChats";
 import { setMyChats } from "../redux/reducer/chatSlice";
+import { setIsSearch } from "../redux/reducer/miscSlice";
 
 function ContactsContainer() {
+  const dispatch = useDispatch();
+
   const [openMyProfile, setOpenMyProfile] = useState(false);
+  const { user } = useSelector((state) => state.auth);
+
+  const { isSearch } = useSelector((state) => state.misc);
+
+  if (!user) return <h1>LOADING</h1>;
+
+  const handleSearchClick = () => {
+    dispatch(setIsSearch(!isSearch));
+  };
 
   return (
     <div className="w-1/3 h-full bg-zinc-200 rounded-xl shadow-[0_3px_10px_rgb(0,0,0,0.2)] overflow-hidden flex flex-col">
@@ -17,11 +29,15 @@ function ContactsContainer() {
           className="w-12 h-12 bg-red-200 rounded-full overflow-hidden bg-contain border-[#00223f] border-[1.5px]"
           onClick={() => setOpenMyProfile(!openMyProfile)}
         >
-          <img src="../src/assets/pic.jpeg" alt="profilePic" />
+          <img src={user.avatar.url} alt="profilePic" />
         </div>
         <div className="flex items-center gap-3">
           <BellRinging size={24} color="#00223f" className="mouse-cursor" />
-          <UserCirclePlus size={24} color="#00223f" />
+          <UserCirclePlus
+            size={24}
+            color="#00223f"
+            onClick={handleSearchClick}
+          />
           <UsersThree size={24} color="#00223f" />
         </div>
       </div>
@@ -32,28 +48,32 @@ function ContactsContainer() {
 }
 
 function MyProfile() {
+  const { user } = useSelector((state) => state.auth);
+
   return (
     <div className="profile-section flex flex-col p-20 gap-10 items-center w-full bg-zinc-100 flex-grow overflow-auto rounded-b-xl">
-      <div className="w-[10rem] h-[10rem] bg-red-300 rounded-full overflow-hidden">
-        <img src="../src/assets/pic.jpeg" alt="profilePic" />
+      <div className="w-[10rem] h-[10rem] bg-red-300 rounded-full ">
+        <img src={user.avatar.url} alt="profilePic" />
       </div>
       <div className="flex flex-col gap-5 items-center">
-        <span>NAME</span> <span>ABOUt</span>
+        <span>Username : {user.username}</span>
+        <span>Name : {user.name}</span>
+        <span>ABOUt</span>
       </div>
     </div>
   );
 }
 
 function ContactsSection() {
-  const { userId } = useParams();
-
   const dispatch = useDispatch();
 
-  const { isLoading, err, myChats } = useGetMyChats();
+  const { isLoading, error, myChats } = useGetMyChats();
 
-  console.log("Loading..");
-
-  if (!isLoading) dispatch(setMyChats(myChats));
+  useEffect(() => {
+    if (!isLoading) {
+      dispatch(setMyChats(myChats));
+    }
+  }, [isLoading, myChats, dispatch]);
 
   return isLoading ? (
     <div className="chat-section w-full bg-zinc-100 flex-grow overflow-auto rounded-b-xl">

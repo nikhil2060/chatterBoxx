@@ -11,7 +11,6 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     userExists: (state, action) => {
-      console.log("UserExits called", state.user);
       state.user = action.payload;
       state.isLoggedIn = true;
       state.isLoading = false;
