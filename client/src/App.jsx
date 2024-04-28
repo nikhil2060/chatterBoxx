@@ -9,8 +9,19 @@ import GlobalStyles from "./styles/GlobalStyles";
 
 import axios from "axios";
 import { useEffect } from "react";
-import { userExists, userNotExists } from "./redux/reducer/auth";
+import { userExists, userNotExists } from "./redux/reducer/authSlice";
 import { getMyProfileRoute } from "./utils/AuthRoutes";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Toaster } from "react-hot-toast";
+
+const queryClient = new QueryClient({
+  // sets cache behind the scenes
+  defaultOptions: {
+    queries: {
+      staleTime: 60 * 1000, // time upto which data will remain fresh in the cache
+    },
+  },
+});
 
 function App() {
   const { user } = useSelector((state) => state.auth);
@@ -33,31 +44,40 @@ function App() {
   }, [dispatch]);
 
   return (
-    <UsersProvider>
-      <BrowserRouter>
-        <GlobalStyles />
-        {user && <Navigate to={`/chat/${user._id}`} />}
-        <Routes>
-          <Route path="chat/:chatId" element={<Chat />} />
-          <Route path="register" element={<Register />}></Route>
-          <Route index element={<Login />}></Route>
-          <Route path="login" element={<Login />} />
-        </Routes>
-      </BrowserRouter>
-      <ToastContainer
+    <QueryClientProvider client={queryClient}>
+      <UsersProvider>
+        <BrowserRouter>
+          <GlobalStyles />
+          {user && <Navigate to={`/chat/${user._id}`} />}
+          <Routes>
+            <Route path="chat/:chatId" element={<Chat />} />
+            <Route path="register" element={<Register />}></Route>
+            <Route index element={<Login />}></Route>
+            <Route path="login" element={<Login />} />
+          </Routes>
+        </BrowserRouter>
+      </UsersProvider>
+      <Toaster
         position="top-center"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-        transition:Bounce
+        gutter={12}
+        containerStyle={{ margin: "8px" }}
+        toastOptions={{
+          success: {
+            duration: 3000,
+          },
+          error: {
+            duration: 5000,
+          },
+          style: {
+            fontSize: "16px",
+            maxWidth: "500px",
+            padding: "16px 24px",
+            backgroundColor: "var(--color-grey-0)",
+            color: "var(--color-grey-700)",
+          },
+        }}
       />
-    </UsersProvider>
+    </QueryClientProvider>
   );
 }
 

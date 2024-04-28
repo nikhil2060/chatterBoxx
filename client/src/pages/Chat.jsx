@@ -7,20 +7,26 @@ import ContactsContainer from "../comp/ContactsContainer";
 import { useContacts } from "../contexts/UsersContext";
 import { logOutRoute } from "../utils/AuthRoutes";
 import axios from "axios";
-import { userExists, userNotExists } from "../redux/reducer/auth";
+import { userExists, userNotExists } from "../redux/reducer/authSlice";
+import { useGetMyChats } from "../features/chatFeatures/useGetMyChats";
+import { getMyChats } from "../services/apiChat";
 
 function Chat() {
   const { user, isLoggedIn } = useSelector((state) => state.auth);
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!user) {
-      // toast.error("Please Log in to your account");
-      console.error("Please login to your account");
-      navigate("/login");
-    }
-  }, [user, navigate]);
+  // if (isLoading) console.log("Loading...");
+
+  // console.log(myChats);
+
+  // useEffect(() => {
+  //   if (!user) {
+  //     // toast.error("Please Log in to your account");
+  //     console.error("Please login to your account");
+  //     navigate("/login");
+  //   }
+  // }, [user, navigate]);
 
   return (
     <div className="page w-full h-[100vh] bg-red-200 flex items-center justify-center bg-gradient-to-r from-rose-50 to-teal-50">

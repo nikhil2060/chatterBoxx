@@ -5,7 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { loginRoute } from "../utils/AuthRoutes";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { userExists, userNotExists } from "../redux/reducer/auth";
+import { userExists, userNotExists } from "../redux/reducer/authSlice";
 
 function Login() {
   const { user, isLoggedIn } = useSelector((state) => state.auth);

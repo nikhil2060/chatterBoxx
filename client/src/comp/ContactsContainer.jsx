@@ -1,13 +1,11 @@
 import { BellRinging, UserCirclePlus, UsersThree } from "@phosphor-icons/react";
-import React from "react";
-import { useEffect } from "react";
-import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import React, { useState } from "react";
+import { useParams } from "react-router-dom";
 
-import { allUserRoute } from "../utils/AuthRoutes";
-
-import { useContacts } from "../contexts/UsersContext";
 import { CircularProgress } from "@mui/material";
+import { useDispatch } from "react-redux";
+import { useGetMyChats } from "../features/chatFeatures/useGetMyChats";
+import { setMyChats } from "../redux/reducer/chatSlice";
 
 function ContactsContainer() {
   const [openMyProfile, setOpenMyProfile] = useState(false);
@@ -49,41 +47,27 @@ function MyProfile() {
 function ContactsSection() {
   const { userId } = useParams();
 
-  // we will verify userID using custum hook later
+  const dispatch = useDispatch();
 
-  const navigate = useNavigate();
+  const { isLoading, err, myChats } = useGetMyChats();
 
-  const {
-    allContacts: contacts,
-    isLoading,
-    currentContact,
-    fetchAllContacts,
-    setCurrentContact,
-  } = useContacts();
+  console.log("Loading..");
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (userId) {
-        await fetchAllContacts(userId);
-      }
-    };
+  if (!isLoading) dispatch(setMyChats(myChats));
 
-    fetchData(); // Fetch contacts when the component mounts
-  }, [fetchAllContacts, userId]);
-
-  return !contacts ? (
+  return isLoading ? (
     <div className="chat-section w-full bg-zinc-100 flex-grow overflow-auto rounded-b-xl">
       <CircularProgress />
     </div>
   ) : (
     <div className="chat-section w-full bg-zinc-100 flex-grow overflow-auto rounded-b-xl">
-      {contacts.map((contact, index) => {
+      {myChats.map((contact, index) => {
         return (
           <ContactBox
             key={index}
             contact={contact}
-            setCurrentContact={setCurrentContact}
-            isSelected={currentContact._id === contact._id}
+            // setCurrentContact={setCurrentContact}
+            // isSelected={currentContact._id === contact._id}
           />
         );
       })}
@@ -101,9 +85,9 @@ function ContactBox({ contact, isSelected, setCurrentContact }) {
       }`}
     >
       <div className="image-box w-10 h-10 bg-zinc-600 rounded-full overflow-hidden bg-cover ">
-        <img src={contact.avatarImage} alt="profilePic" />
+        <img src={contact.avatar[0]} alt="profilePic" />
       </div>
-      <span>{contact.username}</span>
+      <span>{contact.name}</span>
     </div>
   );
 }
