@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import { getMyChats } from "../../services/apiChat";
-import { useDispatch } from "react-redux";
 
 export function useGetMyChats() {
   const {

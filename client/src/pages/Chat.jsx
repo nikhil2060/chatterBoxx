@@ -8,6 +8,8 @@ import ContactsContainer from "../comp/ContactsContainer";
 import { useContacts } from "../contexts/UsersContext";
 import { userNotExists } from "../redux/reducer/authSlice";
 import { logOutRoute } from "../utils/AuthRoutes";
+import Modal from "../ui/Modal";
+import SearchWindow from "../ui/SearchWindow";
 
 function Chat() {
   const { user, isLoggedIn } = useSelector((state) => state.auth);
@@ -24,7 +26,11 @@ function Chat() {
 
   return (
     <div className="w-full h-[100vh] bg-red-200 flex items-center justify-center bg-gradient-to-r from-rose-50 to-teal-50">
-      {isSearch && <div>Search Container</div>}
+      {isSearch && (
+        <Modal>
+          <SearchWindow />
+        </Modal>
+      )}
       <div
         className="chat-container w-5/6 h-5/6 bg-[#B3D4F2] rounded-[2rem]
       flex gap-[1.25rem] p-5 shadow-[0_3px_10px_rgb(0,0,0,0.2)]"

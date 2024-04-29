@@ -1,0 +1,143 @@
+import { MagnifyingGlass, UserPlus } from "@phosphor-icons/react";
+import React, { useEffect, useState } from "react";
+import styled from "styled-components";
+import { useSearchUser } from "../features/UserFeatures/useSearchUser";
+import { useQueryClient } from "@tanstack/react-query";
+
+function SearchWindow() {
+  const [name, setName] = useState("");
+  const queryClient = useQueryClient(); // Initialize queryClient
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      queryClient.invalidateQueries(["searchUser", name]);
+    }, 500); // Adjust the debounce time as needed (e.g., 500 milliseconds)
+
+    return () => clearTimeout(timer);
+  }, [name, queryClient]);
+
+  const { isLoading, error, data: users } = useSearchUser(name);
+
+  if (isLoading) return <h1>LOADING...</h1>;
+  if (error) return <h1>Error: {error.message}</h1>;
+
+  return (
+    <SearchWindowContainer>
+      <InputDiv>
+        <Input
+          type="text"
+          placeholder="Search"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+        <Button>
+          <MagnifyingGlass size={20} />
+        </Button>
+      </InputDiv>
+      <SearchResultContainer className="SearchResultContainer">
+        {name === "" || users.length === 0 ? (
+          <h2>No user found</h2>
+        ) : (
+          users.map((user, i) => (
+            <ResultItem
+              key={i}
+              id={user._id}
+              avatar={user.avatar}
+              name={user.name}
+              username={user.username}
+            />
+          ))
+        )}
+      </SearchResultContainer>
+    </SearchWindowContainer>
+  );
+}
+
+export default SearchWindow;
+
+function ResultItem({ avatar, name, username, id }) {
+  const handleSendRequest = () => {};
+
+  return (
+    <div className="result-item flex gap-4 items-center w-full justify-between border-2 rounded-full px-2 py-1">
+      <ImageContainer className="ImageContainer">
+        <img src={avatar} alt="avatar" />
+      </ImageContainer>
+      <span>{username}</span>
+      <Button onClick={handleSendRequest}>
+        <UserPlus size={20} />
+      </Button>
+    </div>
+  );
+}
+
+const SearchWindowContainer = styled.div`
+  width: 280px;
+  border-radius: 50px;
+  height: 400px;
+  font-weight: 400;
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+`;
+
+const InputDiv = styled.div`
+  width: 280px;
+  border-radius: 50px;
+  min-height: 40px;
+  font-weight: 400;
+  font-size: 12px;
+  box-shadow: 0px 10px 20px 1px #3333331d;
+  display: flex;
+  overflow: hidden;
+`;
+
+const Input = styled.input`
+  width: 250px;
+  border-top-left-radius: 50px;
+  border-bottom-left-radius: 50px;
+  height: 40px;
+  padding: 10px;
+  font-weight: 400;
+  font-size: 12px;
+`;
+
+const Button = styled.button`
+  border-radius: 100%;
+  padding: 10px;
+
+  &:hover {
+    background-color: #b4d4f2;
+    box-shadow: 0px 10px 20px 1px #3333331d;
+  }
+
+  &:visited {
+    box-shadow: transparent;
+    background-color: #18ff8b;
+  }
+`;
+
+const SearchResultContainer = styled.div`
+  overflow-y: auto;
+  max-height: 380px;
+  font-size: 14px;
+  display: flex;
+  flex-grow: 4;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+  gap: 10px;
+`;
+
+const ImageContainer = styled.div`
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  img {
+    width: 40px;
+    height: 40px;
+  }
+`;

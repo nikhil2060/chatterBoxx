@@ -166,7 +166,7 @@ module.exports.logout = async (req, res, next) => {
 
 module.exports.searchUser = async (req, res, next) => {
   try {
-    const { name = "" } = req.query;
+    let { name = "" } = req.query;
 
     const myChats = await Chat.find({
       groupChat: false,
@@ -177,14 +177,17 @@ module.exports.searchUser = async (req, res, next) => {
 
     const allUsersExceptMeAndFriends = await User.find({
       _id: { $nin: allUsersFromMyChats },
-      name: { $regex: name, $options: "i" }, //find patter predictor
+      name: { $regex: name, $options: "i" }, //find pattern predictor
     });
 
-    const users = allUsersExceptMeAndFriends.map(({ _id, name, avatar }) => ({
-      _id,
-      name,
-      avatar: avatar.url,
-    }));
+    const users = allUsersExceptMeAndFriends.map(
+      ({ _id, name, avatar, username }) => ({
+        _id,
+        name,
+        username,
+        avatar: avatar.url,
+      })
+    );
 
     return res.status(200).json({
       status: true,

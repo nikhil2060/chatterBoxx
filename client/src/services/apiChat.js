@@ -1,4 +1,3 @@
-import { useDispatch } from "react-redux";
 import { getMyChatsRoute } from "../utils/ChatRoutes";
 
 export async function getMyChats() {
