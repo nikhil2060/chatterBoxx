@@ -7,7 +7,16 @@ export function useSearchUser(name) {
     queryFn: () => getSearchUser(name),
   });
 
-  console.log(data);
-
   return { isLoading, error, data, refetch };
 }
+
+// export function useSendRequest(userId) {
+//   const { isLoading, data, error, refetch } = useQuery({
+//     queryKey: ["searchUser"],
+//     queryFn: () => getSearchUser(name),
+//   });
+
+//   console.log(data);
+
+//   return { isLoading, error, data, refetch };
+// }

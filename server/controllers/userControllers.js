@@ -216,7 +216,7 @@ module.exports.sendFriendRequest = async (req, res, next) => {
     });
 
     if (request)
-      return res.status(400).json({
+      return res.status(200).json({
         status: false,
         msg: "Request already sent",
       });

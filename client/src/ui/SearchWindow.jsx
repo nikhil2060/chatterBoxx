@@ -1,8 +1,14 @@
-import { MagnifyingGlass, UserPlus } from "@phosphor-icons/react";
+import {
+  MagnifyingGlass,
+  UserCircle,
+  UserPlus,
+  UserCircleCheck,
+} from "@phosphor-icons/react";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useSearchUser } from "../features/UserFeatures/useSearchUser";
 import { useQueryClient } from "@tanstack/react-query";
+import { sendRequest } from "../services/apiUser";
 
 function SearchWindow() {
   const [name, setName] = useState("");
@@ -56,7 +62,17 @@ function SearchWindow() {
 export default SearchWindow;
 
 function ResultItem({ avatar, name, username, id }) {
-  const handleSendRequest = () => {};
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const handleSendRequest = async () => {
+    const data = await sendRequest(id);
+
+    if (data.status === true) {
+      setIsSubmitted(true);
+    } else {
+      setIsSubmitted(false);
+    }
+  };
 
   return (
     <div className="result-item flex gap-4 items-center w-full justify-between border-2 rounded-full px-2 py-1">
@@ -65,7 +81,11 @@ function ResultItem({ avatar, name, username, id }) {
       </ImageContainer>
       <span>{username}</span>
       <Button onClick={handleSendRequest}>
-        <UserPlus size={20} />
+        {!isSubmitted ? (
+          <UserPlus size={20} />
+        ) : (
+          <UserCircleCheck size={25} color="green" />
+        )}
       </Button>
     </div>
   );
@@ -112,10 +132,10 @@ const Button = styled.button`
     box-shadow: 0px 10px 20px 1px #3333331d;
   }
 
-  &:visited {
+  /* &:visited {
     box-shadow: transparent;
     background-color: #18ff8b;
-  }
+  } */
 `;
 
 const SearchResultContainer = styled.div`
