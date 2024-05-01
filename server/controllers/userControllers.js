@@ -250,8 +250,6 @@ module.exports.acceptFriendRequest = async (req, res, next) => {
     //     status: false,
     //   });
 
-    console.log(requestId, accept);
-
     const request = await Request.findById(requestId)
       .populate("sender", "name")
       .populate("receiver", "name");
