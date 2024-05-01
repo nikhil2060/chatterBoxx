@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
+import toast from "react-hot-toast";
 import "react-toastify/dist/ReactToastify.css";
 import styled from "styled-components";
 import { registerRoute } from "../utils/AuthRoutes";
@@ -30,9 +30,7 @@ function Register() {
 
     if (handleValidation(data)) {
       try {
-        toast("Registering the user", {
-          autoClose: 5000,
-        });
+        toast("Registering the user");
 
         const response = await fetch(registerRoute, {
           method: "POST",
@@ -51,7 +49,6 @@ function Register() {
         const responseData = await response.json();
 
         if (responseData.status === true) {
-          // navigate("/");
           toast.success(responseData.msg);
         }
       } catch (error) {
@@ -65,6 +62,7 @@ function Register() {
 
   const onError = (errors) => {
     console.log(errors);
+    toast.error(errors);
   };
 
   function handleValidation({ username, email, password, cpassword }) {

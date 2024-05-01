@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { ToastContainer, toast } from "react-toastify";
+import toast from "react-hot-toast";
 import "react-toastify/dist/ReactToastify.css";
 import { loginRoute } from "../utils/AuthRoutes";
 import { Link, useNavigate } from "react-router-dom";
@@ -43,7 +43,6 @@ function Login() {
           // navigate("/");
           console.log(data);
           dispatch(userExists(data.user));
-          console.log("Login successfull");
           toast.success("Login successfull");
           navigate(`/chat/${data.user._id}`);
         } else {
@@ -112,7 +111,6 @@ function Login() {
           </Link>
         </span>
       </div>
-      <ToastContainer />
     </div>
   );
 }

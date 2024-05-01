@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const messageSchema = new mongoose.Schema(
+const requestSchema = new mongoose.Schema(
   {
     status: {
       type: String,
@@ -24,4 +24,4 @@ const messageSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("Request", messageSchema);
+module.exports = mongoose.model("Request", requestSchema);

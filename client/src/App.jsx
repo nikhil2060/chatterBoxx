@@ -1,6 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
 import { UsersProvider } from "./contexts/UsersContext";
 import Chat from "./pages/Chat";
 import Login from "./pages/Login";
@@ -12,7 +11,7 @@ import { useEffect } from "react";
 import { userExists, userNotExists } from "./redux/reducer/authSlice";
 import { getMyProfileRoute } from "./utils/AuthRoutes";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 
 const queryClient = new QueryClient({
   // sets cache behind the scenes

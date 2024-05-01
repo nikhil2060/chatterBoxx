@@ -10,11 +10,13 @@ import { userNotExists } from "../redux/reducer/authSlice";
 import { logOutRoute } from "../utils/AuthRoutes";
 import Modal from "../ui/Modal";
 import SearchWindow from "../ui/SearchWindow";
+import NotificationModal from "../ui/ModalNotification";
+import Notification from "../ui/Notification";
 
 function Chat() {
   const { user, isLoggedIn } = useSelector((state) => state.auth);
 
-  const { isSearch } = useSelector((state) => state.misc);
+  const { isSearch, isNotification } = useSelector((state) => state.misc);
 
   const navigate = useNavigate();
 
@@ -30,6 +32,11 @@ function Chat() {
         <Modal>
           <SearchWindow />
         </Modal>
+      )}
+      {isNotification && (
+        <NotificationModal>
+          <Notification />
+        </NotificationModal>
       )}
       <div
         className="chat-container w-5/6 h-5/6 bg-[#B3D4F2] rounded-[2rem]

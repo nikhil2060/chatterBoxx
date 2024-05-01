@@ -1,4 +1,8 @@
-import { getSearchUserRoute, sendRequestRoute } from "../utils/UserRoutes";
+import {
+  getNotificationsRoute,
+  getSearchUserRoute,
+  sendRequestRoute,
+} from "../utils/UserRoutes";
 
 export async function getSearchUser(username) {
   // if (username === "") return [];
@@ -15,7 +19,7 @@ export async function getSearchUser(username) {
 
     return users;
   } catch (err) {
-    throw Error("Failed in getting chat", err);
+    throw Error("Failed in getting user", err);
   }
 }
 
@@ -36,6 +40,23 @@ export async function sendRequest(userId) {
 
     return data;
   } catch (err) {
-    throw Error("Failed in getting chat", err);
+    throw Error("Failed in sending request", err);
+  }
+}
+
+export async function getNotifications() {
+  try {
+    const res = await fetch(getNotificationsRoute, {
+      method: "GET",
+      credentials: "include",
+    });
+
+    if (!res.ok) throw Error();
+
+    const data = await res.json();
+
+    return data;
+  } catch (err) {
+    throw Error("Failed in getting notifications", err);
   }
 }

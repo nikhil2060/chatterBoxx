@@ -88,11 +88,6 @@ module.exports.uploadpic = async (req, res, next) => {
     const fileName = req.file.filename;
     const userId = req.body.userId;
 
-    console.log(req.body);
-
-    console.log(fileName);
-    console.log(userId);
-
     const updatedUser = await User.findByIdAndUpdate(
       userId,
       { avatarImage: fileName, isAvatarImageSet: true },
@@ -111,7 +106,6 @@ module.exports.uploadpic = async (req, res, next) => {
 };
 
 module.exports.getAllUsers = async (req, res, next) => {
-  // console.log("hello");
   try {
     const users = await User.find({ _id: { $ne: req.params.id } }).select([
       "email",
@@ -211,9 +205,11 @@ module.exports.sendFriendRequest = async (req, res, next) => {
     const request = await Request.findOne({
       $or: [
         { sender: req.user, receiver: userId },
-        { sender: userId, receiver: req.user },
+        // { sender: userId, receiver: req.user },
       ],
-    });
+    })
+      .populate("sender", "name")
+      .populate("receiver", "name");
 
     if (request)
       return res.status(200).json({
@@ -230,7 +226,7 @@ module.exports.sendFriendRequest = async (req, res, next) => {
 
     return res.status(200).json({
       status: true,
-      msg: "Friend Request SSuccesfully",
+      msg: "Friend Request Succesfully",
     });
   } catch (error) {
     next(error);
@@ -293,7 +289,7 @@ module.exports.acceptFriendRequest = async (req, res, next) => {
 
     return res.status(200).json({
       status: true,
-      msg: "Friend Request accepted Succesfully",
+      msg: "Request accepted",
       senderId: request.sender._id,
     });
   } catch (error) {
@@ -302,17 +298,17 @@ module.exports.acceptFriendRequest = async (req, res, next) => {
 };
 
 module.exports.getMyNotifications = async (req, res, next) => {
-  // console.log("hello");
   try {
     const requests = await Request.find({
       receiver: req.user,
-    }).populate("sender", "name avatar");
+    }).populate("sender", "name avatar username");
 
     const allRequests = requests.map(({ _id, sender }) => ({
       _id,
       sender: {
         _id: sender._id,
         name: sender.name,
+        username: sender.username,
         avatar: sender.avatar.url,
       },
     }));
@@ -351,8 +347,6 @@ module.exports.getMyFriends = async (req, res, next) => {
         avatar: otherUser.avatar.url,
       };
     });
-
-    console.log(friends);
 
     if (chatId) {
       const chat = await Chat.findById(chatId);

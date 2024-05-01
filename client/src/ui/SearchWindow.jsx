@@ -9,6 +9,7 @@ import styled from "styled-components";
 import { useSearchUser } from "../features/UserFeatures/useSearchUser";
 import { useQueryClient } from "@tanstack/react-query";
 import { sendRequest } from "../services/apiUser";
+import toast from "react-hot-toast";
 
 function SearchWindow() {
   const [name, setName] = useState("");
@@ -68,8 +69,10 @@ function ResultItem({ avatar, name, username, id }) {
     const data = await sendRequest(id);
 
     if (data.status === true) {
+      toast.success(data.msg);
       setIsSubmitted(true);
     } else {
+      toast.error(data.msg);
       setIsSubmitted(false);
     }
   };
@@ -131,11 +134,6 @@ const Button = styled.button`
     background-color: #b4d4f2;
     box-shadow: 0px 10px 20px 1px #3333331d;
   }
-
-  /* &:visited {
-    box-shadow: transparent;
-    background-color: #18ff8b;
-  } */
 `;
 
 const SearchResultContainer = styled.div`

@@ -6,7 +6,7 @@ import { CircularProgress } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useGetMyChats } from "../features/chatFeatures/useGetMyChats";
 import { setMyChats } from "../redux/reducer/chatSlice";
-import { setIsSearch } from "../redux/reducer/miscSlice";
+import { setIsNotification, setIsSearch } from "../redux/reducer/miscSlice";
 
 function ContactsContainer() {
   const dispatch = useDispatch();
@@ -14,12 +14,16 @@ function ContactsContainer() {
   const [openMyProfile, setOpenMyProfile] = useState(false);
   const { user } = useSelector((state) => state.auth);
 
-  const { isSearch } = useSelector((state) => state.misc);
+  const { isSearch, isNotification } = useSelector((state) => state.misc);
 
   if (!user) return <h1>LOADING</h1>;
 
   const handleSearchClick = () => {
     dispatch(setIsSearch(!isSearch));
+  };
+
+  const handleNotificationClick = () => {
+    dispatch(setIsNotification(!isNotification));
   };
 
   return (
@@ -32,7 +36,12 @@ function ContactsContainer() {
           <img src={user.avatar.url} alt="profilePic" />
         </div>
         <div className="flex items-center gap-3">
-          <BellRinging size={24} color="#00223f" className="mouse-cursor" />
+          <BellRinging
+            size={24}
+            color="#00223f"
+            className="mouse-cursor"
+            onClick={handleNotificationClick}
+          />
           <UserCirclePlus
             size={24}
             color="#00223f"
