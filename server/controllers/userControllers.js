@@ -234,6 +234,7 @@ module.exports.sendFriendRequest = async (req, res, next) => {
 };
 
 module.exports.acceptFriendRequest = async (req, res, next) => {
+  console.log("Received....");
   try {
     const { requestId, accept } = req.body;
 
@@ -243,11 +244,13 @@ module.exports.acceptFriendRequest = async (req, res, next) => {
         status: false,
       });
 
-    if (accept !== Boolean)
-      return res.status(400).json({
-        msg: "Please Add Accept",
-        status: false,
-      });
+    // if (accept !== Boolean)
+    //   return res.status(400).json({
+    //     msg: "Please Add Accept",
+    //     status: false,
+    //   });
+
+    console.log(requestId, accept);
 
     const request = await Request.findById(requestId)
       .populate("sender", "name")
@@ -271,7 +274,7 @@ module.exports.acceptFriendRequest = async (req, res, next) => {
 
       return res.status(200).json({
         msg: "Request Rejected",
-        status: true,
+        status: false,
       });
     }
 
@@ -282,7 +285,7 @@ module.exports.acceptFriendRequest = async (req, res, next) => {
         members,
         name: `${request.sender.name}-${request.receiver.name}`,
       }),
-      // request.deleteOne(),
+      request.deleteOne(),
     ]);
 
     emitEvent(req, REFETCH_CHATS, members);

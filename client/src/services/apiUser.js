@@ -1,4 +1,6 @@
+import toast from "react-hot-toast";
 import {
+  acceptRequestRoute,
   getNotificationsRoute,
   getSearchUserRoute,
   sendRequestRoute,
@@ -58,5 +60,32 @@ export async function getNotifications() {
     return data;
   } catch (err) {
     throw Error("Failed in getting notifications", err);
+  }
+}
+
+export async function acceptRequest(requestId, accept) {
+  try {
+    const res = await fetch(acceptRequestRoute, {
+      body: JSON.stringify({ requestId, accept }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "PUT",
+      credentials: "include",
+    });
+
+    if (!res.ok) throw Error();
+
+    const data = await res.json();
+
+    if (data.status === true) {
+      toast.success(data.msg);
+    } else {
+      toast.error(data.msg);
+    }
+
+    return data;
+  } catch (err) {
+    throw Error("Failed in sending request", err);
   }
 }

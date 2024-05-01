@@ -12,17 +12,22 @@ import { useSearchUser } from "../features/UserFeatures/useSearchUser";
 import { useQueryClient } from "@tanstack/react-query";
 import { sendRequest } from "../services/apiUser";
 import toast from "react-hot-toast";
-import { useGetNotifications } from "../features/UserFeatures/useNotifications";
+import {
+  useAcceptRequest,
+  useGetNotifications,
+} from "../features/UserFeatures/useNotifications";
+import { setIsNotification } from "../redux/reducer/miscSlice";
+import { useDispatch } from "react-redux";
 
 function Notification() {
   const { isLoading, data, error } = useGetNotifications();
+
+  const dispatch = useDispatch();
 
   if (isLoading) return <h1>LOADING...</h1>;
   if (error) return <h1>Error: {error.message}</h1>;
 
   const notifications = data?.allRequests;
-
-  console.log(notifications);
 
   return (
     <SearchWindowContainer>
@@ -30,12 +35,12 @@ function Notification() {
         <h2>Notifications</h2>
         <SearchResultContainer className="SearchResultContainer">
           {notifications.length === 0 ? (
-            <h2>Notifications not present</h2>
+            <h2>Not any notifications</h2>
           ) : (
             notifications.map((notification, i) => (
               <NotificationItem
                 key={i}
-                id={notification.sender_id}
+                id={notification._id}
                 avatar={notification.sender.avatar}
                 name={notification.sender.name}
                 username={notification.sender.username}
@@ -44,7 +49,6 @@ function Notification() {
           )}
         </SearchResultContainer>
       </div>
-      -
     </SearchWindowContainer>
   );
 }
@@ -52,20 +56,19 @@ function Notification() {
 export default Notification;
 
 function NotificationItem({ avatar, name, username, id }) {
+  const { isAccepting, mutateRequest } = useAcceptRequest();
   const handleAcceptRequest = async () => {
-    // if (data.status === true) {
-    //   toast.success(data.msg);
-    // } else {
-    //   toast.error(data.msg);
-    // }
+    mutateRequest({
+      requestId: id,
+      accept: true,
+    });
   };
 
   const handleRejectRequest = async () => {
-    // if (data.status === true) {
-    //   toast.success(data.msg);
-    // } else {
-    //   toast.error(data.msg);
-    // }
+    mutateRequest({
+      requestId: id,
+      accept: false,
+    });
   };
 
   return (
@@ -77,10 +80,10 @@ function NotificationItem({ avatar, name, username, id }) {
 
       <div>
         <Button onClick={handleRejectRequest}>
-          <X size={15} />
+          <X size={15} color="red" weight="bold" />
         </Button>
         <Button onClick={handleAcceptRequest}>
-          <Check size={15} />
+          <Check size={15} color="green" weight="bold" />
         </Button>
       </div>
     </div>

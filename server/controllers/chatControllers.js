@@ -46,7 +46,7 @@ module.exports.getMyChats = async (req, res, next) => {
   try {
     const chats = await Chat.find({ members: req.user }).populate(
       "members",
-      "name avatar _id"
+      "name avatar"
     );
 
     if (!chats)
