@@ -12,7 +12,7 @@ const {
 
 const { login } = require("../controllers/userControllers");
 
-const isAuthenticated = require("../middlewares/auth");
+const { isAuthenticated } = require("../middlewares/auth");
 // const multer = require("multer");
 const { singleAvatar } = require("../middlewares/multer");
 

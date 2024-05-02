@@ -12,6 +12,7 @@ import { userExists, userNotExists } from "./redux/reducer/authSlice";
 import { getMyProfileRoute } from "./utils/AuthRoutes";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import toast, { Toaster } from "react-hot-toast";
+import { SocketProvider } from "./contexts/socketContext";
 
 const queryClient = new QueryClient({
   // sets cache behind the scenes
@@ -44,18 +45,20 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <UsersProvider>
-        <BrowserRouter>
-          <GlobalStyles />
-          {user && <Navigate to={`/chat/${user._id}`} />}
-          <Routes>
-            <Route path="chat/:chatId" element={<Chat />} />
-            <Route path="register" element={<Register />}></Route>
-            <Route index element={<Login />}></Route>
-            <Route path="login" element={<Login />} />
-          </Routes>
-        </BrowserRouter>
-      </UsersProvider>
+      <SocketProvider>
+        <UsersProvider>
+          <BrowserRouter>
+            <GlobalStyles />
+            {user && <Navigate to={`/chat/${user._id}`} />}
+            <Routes>
+              <Route path="chat/:chatId" element={<Chat />} />
+              <Route path="register" element={<Register />}></Route>
+              <Route index element={<Login />}></Route>
+              <Route path="login" element={<Login />} />
+            </Routes>
+          </BrowserRouter>
+        </UsersProvider>
+      </SocketProvider>
       <Toaster
         position="top-center"
         gutter={12}

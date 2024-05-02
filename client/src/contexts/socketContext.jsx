@@ -1,4 +1,4 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext, useMemo } from "react";
 import io from "socket.io-client";
 
 const socketContext = createContext();
@@ -13,14 +13,16 @@ const useSocket = () => {
 };
 
 function SocketProvider({ children }) {
-  const socket = io("localhost:3000", {
-    withCredentials: "include",
-  });
+  const socket = useMemo(() => {
+    return io("http://localhost:5000", {
+      withCredentials: "include",
+    });
+  }, []);
 
   return (
-    <socketContext.provider value={{ socket }}>
+    <socketContext.Provider value={{ socket }}>
       {children}
-    </socketContext.provider>
+    </socketContext.Provider>
   );
 }
 

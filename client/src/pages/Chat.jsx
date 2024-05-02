@@ -12,6 +12,7 @@ import Modal from "../ui/Modal";
 import SearchWindow from "../ui/SearchWindow";
 import NotificationModal from "../ui/ModalNotification";
 import Notification from "../ui/Notification";
+import { useSocket } from "../contexts/socketContext";
 
 function Chat() {
   const { user, isLoggedIn } = useSelector((state) => state.auth);
@@ -52,6 +53,8 @@ function Chat() {
 export default Chat;
 
 function ChatContainer() {
+  const { socket } = useSocket();
+
   return (
     <div className="w-2/3 h-full bg-zinc-200 rounded-xl shadow-[0_3px_10px_rgb(0,0,0,0.2)] overflow-hidden flex flex-col">
       <ChatHeader />

@@ -3,44 +3,38 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 
-const userRoutes = require("./routes/userRoutes");
-const chatRoutes = require("./routes/chatRoutes");
-
-const Message = require("./model/messageModel");
-
 const { Server } = require("socket.io");
-const { createServer } = require("http");
+const { createServer, METHODS } = require("http");
 
 const { v4: uuid } = require("uuid");
 
 const { v2: cloudnary } = require("cloudinary");
 
-// const {
-//   createUser,
-//   createGroupChats,
-//   createSingleChats,
-//   createMessagesInAChat,
-// } = require("./seeders/chatSeeders");
-
 const { NEW_MESSAGE, NEW_MESSAGE_ALERT } = require("./constants/events");
 const { getSockets } = require("./middlewares/helper");
+const { socketAuthenticator } = require("./middlewares/auth");
+
+const userRoutes = require("./routes/userRoutes");
+const chatRoutes = require("./routes/chatRoutes");
+const Message = require("./model/messageModel");
+
+const corsOptions = {
+  origin: [
+    "http://localhost:5173",
+    "http://localhost:4173",
+    process.env.CLIENT_URL,
+  ],
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true,
+};
 
 const app = express();
 const server = createServer(app);
-const io = new Server(server, {});
+const io = new Server(server, { cors: corsOptions });
 
 require("dotenv").config();
 
-app.use(
-  cors({
-    origin: [
-      "http://localhost:5173",
-      "http://localhost:4173",
-      process.env.CLIENT_URL,
-    ],
-    credentials: true,
-  })
-);
+app.use(cors(corsOptions));
 
 app.use(express.json()); //middleware parses the JSON data
 app.use(cookieParser());
@@ -68,23 +62,20 @@ cloudnary.config({
 app.use("/api/auth/user", userRoutes);
 app.use("/api/chat", chatRoutes);
 
-// createUser(10);
-
-// createSingleChats(10);
-// createGroupChats(10);
-// createMessagesInAChat("661a19d630dd1234540672a1", 10);
+io.use((socket, next) => {
+  cookieParser()(socket.request, socket.request.resume, async (err) => {
+    await socketAuthenticator(err, socket, next);
+  });
+});
 
 const userSocketIDs = new Map();
 
-// io.use((socket, next) => {});
-
 io.on("connection", (socket) => {
-  const user = {
-    _id: 123124124,
-    name: "nikhil",
-  };
+  const user = socket.user;
 
-  userSocketIDs.set(user._id.toString(), socket.id);
+  console.log(user);
+
+  userSocketIDs.set(user?._id?.toString(), socket?.id);
 
   console.log("User Connected", socket.id);
 
@@ -95,6 +86,7 @@ io.on("connection", (socket) => {
       sender: {
         _id: user._id,
         name: user.name,
+        avatar: user.avatar.url,
       },
       chat: chatId,
       createdAt: new Date().toISOString(),
@@ -121,8 +113,8 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    console.log("User disconnected", socket.id);
-    userSocketIDs.delete(user._id.toString());
+    // console.log("User disconnected", socket.id);
+    userSocketIDs?.delete(user?._id?.toString());
   });
 });
 
@@ -133,3 +125,16 @@ server.listen(process.env.PORT, () => {
 });
 
 module.exports = userSocketIDs;
+
+// createUser(10);
+
+// createSingleChats(10);
+// createGroupChats(10);
+// createMessagesInAChat("661a19d630dd1234540672a1", 10);
+
+// const {
+//   createUser,
+//   createGroupChats,
+//   createSingleChats,
+//   createMessagesInAChat,
+// } = require("./seeders/chatSeeders");

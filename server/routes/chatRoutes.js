@@ -12,7 +12,7 @@ const {
   getMessages,
 } = require("../controllers/chatControllers");
 const { getMyProfile } = require("../controllers/userControllers");
-const isAuthenticated = require("../middlewares/auth");
+const { isAuthenticated } = require("../middlewares/auth");
 const { attachmentsMulter } = require("../middlewares/multer");
 
 const router = require("express").Router();
