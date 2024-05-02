@@ -73,8 +73,6 @@ const userSocketIDs = new Map();
 io.on("connection", (socket) => {
   const user = socket.user;
 
-  console.log(user);
-
   userSocketIDs.set(user?._id?.toString(), socket?.id);
 
   console.log("User Connected", socket.id);
