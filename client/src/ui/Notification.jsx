@@ -56,12 +56,15 @@ function Notification() {
 export default Notification;
 
 function NotificationItem({ avatar, name, username, id }) {
+  const dispatch = useDispatch();
+
   const { isAccepting, mutateRequest } = useAcceptRequest();
   const handleAcceptRequest = async () => {
     mutateRequest({
       requestId: id,
       accept: true,
     });
+    dispatch(setIsNotification(false));
   };
 
   const handleRejectRequest = async () => {
@@ -69,6 +72,7 @@ function NotificationItem({ avatar, name, username, id }) {
       requestId: id,
       accept: false,
     });
+    dispatch(setIsNotification(false));
   };
 
   return (

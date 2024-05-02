@@ -6,6 +6,13 @@ import { allUserRoute } from "../utils/AuthRoutes";
 
 const UsersContext = createContext();
 
+function useContacts() {
+  // custom hook
+  const context = useContext(UsersContext);
+  if (context === undefined) throw new Error("Users Context incorrectly used");
+  return context;
+}
+
 const initialState = {
   allContacts: [],
   isLoading: false,
@@ -88,13 +95,6 @@ function UsersProvider({ children }) {
       {children}
     </UsersContext.Provider>
   );
-}
-
-function useContacts() {
-  // custom hook
-  const context = useContext(UsersContext);
-  if (context === undefined) throw new Error("Users Context incorrectly used");
-  return context;
 }
 
 export { UsersProvider, useContacts };
