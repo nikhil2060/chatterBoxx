@@ -11,7 +11,6 @@ const { v4: uuid } = require("uuid");
 const { v2: cloudnary } = require("cloudinary");
 
 const { NEW_MESSAGE, NEW_MESSAGE_ALERT } = require("./constants/events");
-const { getSockets } = require("./middlewares/helper");
 const { socketAuthenticator } = require("./middlewares/auth");
 
 const userRoutes = require("./routes/userRoutes");
@@ -69,6 +68,11 @@ io.use((socket, next) => {
 });
 
 const userSocketIDs = new Map();
+
+const getSockets = (users = []) => {
+  const sockets = users.map((user) => userSocketIDs.get(user.toString()));
+  return sockets;
+};
 
 io.on("connection", (socket) => {
   const user = socket.user;

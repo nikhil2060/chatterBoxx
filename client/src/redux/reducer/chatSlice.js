@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   myChats: [],
   isLoading: true,
-  currentContact: {},
+  currentChatId: "",
 };
 
 const chatSlice = createSlice({
@@ -14,9 +14,12 @@ const chatSlice = createSlice({
       state.myChats = action.payload;
       state.isLoading = false;
     },
+    setCurrentChat: (state, action) => {
+      state.currentChatId = action.payload;
+    },
   },
 });
 
 export default chatSlice;
 
-export const { setMyChats } = chatSlice.actions;
+export const { setMyChats, setCurrentChat } = chatSlice.actions;
