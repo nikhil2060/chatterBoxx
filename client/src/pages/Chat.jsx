@@ -8,7 +8,10 @@ import { toast } from "react-toastify";
 import { useSocket } from "../contexts/socketContext";
 import { userNotExists } from "../redux/reducer/authSlice";
 
-import { useGetChatDetails } from "../features/chatFeatures/useChatDetails";
+import {
+  useGetChatDetails,
+  useGetChatMessages,
+} from "../features/chatFeatures/useChatDetails";
 import useSocketEvents from "../hooks/useSocketEvents";
 
 import { NEW_MESSAGE } from "../contants/event";
@@ -62,14 +65,26 @@ export default Chat;
 
 function ChatContainer() {
   const [messages, setMessages] = useState([]);
+  const [totalPages, setTotalPages] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const { user } = useSelector((state) => state.auth);
-
-  console.log(user?._id);
 
   const { currentChatId } = useSelector((state) => state.chat);
 
   const { isLoading, error, data, refetch } = useGetChatDetails(currentChatId);
+
+  const {
+    isLoading: isLoadingMessages,
+    error: messsageError,
+    data: oldMessageData,
+    refetch: refetchMesseages,
+  } = useGetChatMessages(currentChatId, currentPage);
+
+  useEffect(() => {
+    refetch();
+    refetchMesseages();
+  }, [refetch, currentChatId, refetchMesseages]);
 
   const { socket } = useSocket();
 
@@ -77,20 +92,27 @@ function ChatContainer() {
     setMessages((prev) => [...prev, data]);
   }, []);
 
-  console.log(messages);
-
   const eventHandler = { [NEW_MESSAGE]: newMessageHandler };
 
   useSocketEvents(socket, eventHandler);
 
   if (isLoading) return <h1>Loading</h1>;
 
+  if (isLoadingMessages) return <h1>Message loading</h1>;
+
+  const allMessages = [...(oldMessageData?.msg || []), ...messages];
+
+  // // console.log(oldMessageData);
+  // // // console.log(messages);
+  // console.log(oldMessageData?.message);
+  // console.log(messages);
+
   return (
     <div className="w-2/3 h-full bg-zinc-200 rounded-xl shadow-[0_3px_10px_rgb(0,0,0,0.2)] overflow-hidden flex flex-col">
       <ChatHeader />
 
       <div className="chat-section w-full shadow-[0_3px_10px_rgb(0,0,0,0.2)] bg-[url('../src/assets/background.jpeg')] bg-contain flex-grow p-4 gap-5 flex flex-col overflow-auto">
-        {messages.map((message, i) =>
+        {allMessages.map((message, i) =>
           message.message.sender._id != user?._id ? (
             <MessageSenderItem key={i}>
               {message.message.content}

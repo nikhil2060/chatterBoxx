@@ -78,6 +78,8 @@ function ContactsSection() {
 
   const { currentChatId } = useSelector((state) => state.chat);
 
+  console.log(currentChatId);
+
   const { isLoading, error, myChats } = useGetMyChats();
 
   useEffect(() => {
@@ -112,9 +114,7 @@ function ContactBox({ contact, isSelected }) {
 
   return (
     <div
-      // onClick={() => setSelected(contact._id)}
       onClick={() => dispatch(setCurrentChat(contact._id))}
-      // onClick={() => console.log(contact._id)}
       className={`w-full h-[4.5rem] flex items-center p-5 gap-5 border-b-[1px] border-zinc-400 transition duration-400 ${
         isSelected ? "bg-[#B3D4F2] shadow-md z-50 border-none " : ""
       }`}
