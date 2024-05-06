@@ -4,22 +4,26 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import ContactsContainer from "../comp/ContactsContainer";
-import { useContacts } from "../contexts/UsersContext";
-import { userNotExists } from "../redux/reducer/authSlice";
-import { logOutRoute } from "../utils/AuthRoutes";
-import Modal from "../ui/Modal";
-import SearchWindow from "../ui/SearchWindow";
-import NotificationModal from "../ui/ModalNotification";
-import Notification from "../ui/Notification";
+
 import { useSocket } from "../contexts/socketContext";
-import { NEW_MESSAGE } from "../contants/event";
+import { userNotExists } from "../redux/reducer/authSlice";
 
 import { useGetChatDetails } from "../features/chatFeatures/useChatDetails";
 import useSocketEvents from "../hooks/useSocketEvents";
 
+import { NEW_MESSAGE } from "../contants/event";
+import { logOutRoute } from "../utils/AuthRoutes";
+
+import Modal from "../ui/Modal";
+import ContactsContainer from "../comp/ContactsContainer";
+import Notification from "../ui/Notification";
+import NotificationModal from "../ui/ModalNotification";
+import SearchWindow from "../ui/SearchWindow";
+import MessageSenderItem from "../comp/MessageSenderItem";
+import MessageReceiverItem from "../comp/MessageReceiverItem";
+
 function Chat() {
-  const { user, isLoggedIn } = useSelector((state) => state.auth);
+  const { user } = useSelector((state) => state.auth);
 
   const { isSearch, isNotification } = useSelector((state) => state.misc);
 
@@ -57,6 +61,12 @@ function Chat() {
 export default Chat;
 
 function ChatContainer() {
+  const [messages, setMessages] = useState([]);
+
+  const { user } = useSelector((state) => state.auth);
+
+  console.log(user?._id);
+
   const { currentChatId } = useSelector((state) => state.chat);
 
   const { isLoading, error, data, refetch } = useGetChatDetails(currentChatId);
@@ -64,8 +74,10 @@ function ChatContainer() {
   const { socket } = useSocket();
 
   const newMessageHandler = useCallback((data) => {
-    console.log(data);
+    setMessages((prev) => [...prev, data]);
   }, []);
+
+  console.log(messages);
 
   const eventHandler = { [NEW_MESSAGE]: newMessageHandler };
 
@@ -77,8 +89,18 @@ function ChatContainer() {
     <div className="w-2/3 h-full bg-zinc-200 rounded-xl shadow-[0_3px_10px_rgb(0,0,0,0.2)] overflow-hidden flex flex-col">
       <ChatHeader />
 
-      <div className="chat-section w-full shadow-[0_3px_10px_rgb(0,0,0,0.2)] bg-[url('../src/assets/background.jpeg')] bg-contain flex-grow p-4">
-        hello
+      <div className="chat-section w-full shadow-[0_3px_10px_rgb(0,0,0,0.2)] bg-[url('../src/assets/background.jpeg')] bg-contain flex-grow p-4 gap-5 flex flex-col overflow-auto">
+        {messages.map((message, i) =>
+          message.message.sender._id != user?._id ? (
+            <MessageSenderItem key={i}>
+              {message.message.content}
+            </MessageSenderItem>
+          ) : (
+            <MessageReceiverItem key={i}>
+              {message.message.content}
+            </MessageReceiverItem>
+          )
+        )}
       </div>
 
       <ChatInput chatId={data?._id} members={data?.members} />
