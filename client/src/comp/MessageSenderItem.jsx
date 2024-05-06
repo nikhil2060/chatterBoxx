@@ -6,7 +6,7 @@ function MessageSenderItem({ children }) {
     <div className="w-full flex justify-start">
       <OuterDiv>
         <ImgDiv>
-          <img src="../../public/userIcon.jpeg" alt="sender image" />
+          <img src="/userIcon.jpeg" alt="sender image" />
         </ImgDiv>
 
         <div>{children}</div>

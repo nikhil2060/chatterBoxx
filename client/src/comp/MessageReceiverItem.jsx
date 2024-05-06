@@ -5,9 +5,9 @@ function MessageReceiverItem({ children }) {
   return (
     <div className="w-full flex justify-end">
       <OuterDiv>
-        <div>{children}</div>
+        <div className="pl-2">{children}</div>
         <ImgDiv>
-          <img src="../../public/userIcon.jpeg" alt="sender image" />
+          <img src="/userIcon.jpeg" alt="sender image" />
         </ImgDiv>
       </OuterDiv>
     </div>
@@ -20,15 +20,19 @@ const OuterDiv = styled.div`
   padding: 10px;
   text-align: left;
   border-radius: 20px 0px 20px 20px;
+
   display: flex;
   align-items: start;
-  gap: 10px;
+  justify-content: space-between;
+  gap: 1px;
+
   font-size: 12px;
   box-shadow: 0px 0px 15px #3333332a;
 `;
 
 const ImgDiv = styled.div`
-  width: 50px;
+  margin-left: 3px;
+  width: 30px;
   min-width: 30px;
   min-height: 30px;
   overflow: hidden;
