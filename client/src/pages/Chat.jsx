@@ -1,9 +1,16 @@
 import { PaperPlaneRight, Paperclip } from "@phosphor-icons/react";
 import axios from "axios";
-import React, { useCallback, useEffect, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useInfiniteScrollTop } from "6pp";
 
 import { useSocket } from "../contexts/socketContext";
 import { userNotExists } from "../redux/reducer/authSlice";
@@ -66,25 +73,40 @@ export default Chat;
 function ChatContainer() {
   const [messages, setMessages] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [page, setPage] = useState(1);
+
+  const containerRef = useRef(null);
 
   const { user } = useSelector((state) => state.auth);
 
   const { currentChatId } = useSelector((state) => state.chat);
 
-  const { isLoading, error, data, refetch } = useGetChatDetails(currentChatId);
+  const {
+    isLoading,
+    error,
+    data: chatData,
+    refetch,
+  } = useGetChatDetails(currentChatId);
 
   const {
     isLoading: isLoadingMessages,
     error: messsageError,
     data: oldMessageData,
     refetch: refetchMesseages,
-  } = useGetChatMessages(currentChatId, currentPage);
+  } = useGetChatMessages(currentChatId, page);
 
   useEffect(() => {
     refetch();
     refetchMesseages();
   }, [refetch, currentChatId, refetchMesseages]);
+
+  // const { data: oldMessages, setData: setOldMessages } = useInfiniteScrollTop(
+  //   containerRef,
+  //   oldMessageData?.totalPages,
+  //   page,
+  //   setPage,
+  //   oldMessageData?.message
+  // );
 
   const { socket } = useSocket();
 
@@ -100,32 +122,38 @@ function ChatContainer() {
 
   if (isLoadingMessages) return <h1>Message loading</h1>;
 
-  const allMessages = [...(oldMessageData?.msg || []), ...messages];
-
-  // // console.log(oldMessageData);
-  // // // console.log(messages);
-  // console.log(oldMessageData?.message);
-  // console.log(messages);
+  // const allMessages = [...oldMessages, ...messages];
 
   return (
     <div className="w-2/3 h-full bg-zinc-200 rounded-xl shadow-[0_3px_10px_rgb(0,0,0,0.2)] overflow-hidden flex flex-col">
       <ChatHeader />
 
-      <div className="chat-section w-full shadow-[0_3px_10px_rgb(0,0,0,0.2)] bg-[url('../src/assets/background.jpeg')] bg-contain flex-grow p-4 gap-5 flex flex-col overflow-auto">
-        {allMessages.map((message, i) =>
-          message.message.sender._id != user?._id ? (
+      <div className="chat-section w-full shadow-[0_3px_10px_rgb(0,0,0,0.2)] bg-[url('../src/assets/background.jpeg')] bg-contain flex-grow p-4 gap-5 flex flex-col overflow-auto overflow-x-hidden">
+        {oldMessageData !== undefined &&
+          oldMessageData?.message.map((message, i) =>
+            message?.sender?._id != user?._id ? (
+              <MessageSenderItem key={i}>{message?.content}</MessageSenderItem>
+            ) : (
+              <MessageReceiverItem key={i}>
+                {message?.content}
+              </MessageReceiverItem>
+            )
+          )}
+
+        {messages.map((message, i) =>
+          message?.message?.sender?._id != user?._id ? (
             <MessageSenderItem key={i}>
-              {message.message.content}
+              {message?.message?.content}
             </MessageSenderItem>
           ) : (
             <MessageReceiverItem key={i}>
-              {message.message.content}
+              {message?.message?.content}
             </MessageReceiverItem>
           )
         )}
       </div>
 
-      <ChatInput chatId={data?._id} members={data?.members} />
+      <ChatInput chatId={chatData?._id} members={chatData?.members} />
     </div>
   );
 }
@@ -134,7 +162,7 @@ function ChatHeader() {
   const { currentChatId, myChats } = useSelector((state) => state.chat);
 
   const currentContact = myChats.find(
-    (contact) => contact._id === currentChatId
+    (contact) => contact?._id === currentChatId
   );
 
   const dispatch = useDispatch();
@@ -153,7 +181,7 @@ function ChatHeader() {
         })
         .catch((err) => console.error("Something went wrong"));
     } catch (error) {
-      // asd
+      toast.error(error);
     }
   };
 

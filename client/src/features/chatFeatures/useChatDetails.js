@@ -5,7 +5,6 @@ export function useGetChatDetails(currentChatId) {
   const { isLoading, data, error, refetch } = useQuery({
     queryKey: ["chatDetails"],
     queryFn: () => getChatDetails(currentChatId),
-    enabled: !!currentChatId,
   });
 
   return { isLoading, error, data, refetch };
@@ -15,7 +14,6 @@ export function useGetChatMessages(currentChatId, page = 1) {
   const { isLoading, data, error, refetch } = useQuery({
     queryKey: ["chatMessages"],
     queryFn: () => getChatMessages(currentChatId, page),
-    enabled: !!currentChatId,
   });
 
   return { isLoading, error, data, refetch };
