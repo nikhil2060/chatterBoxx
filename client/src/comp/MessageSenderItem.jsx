@@ -16,26 +16,32 @@ function MessageSenderItem({ children }) {
 }
 
 const OuterDiv = styled.div`
-  background-color: white;
+  background-color: #ffffff;
   width: 30%;
   padding: 10px;
   text-align: left;
   border-radius: 0px 20px 20px 20px;
+
   display: flex;
-  align-items: start;
-  justify-content: space-around;
+  align-items: center;
+  /* justify-content: space-between; */
   gap: 10px;
+
   font-size: 12px;
   box-shadow: 0px 0px 15px #3333332a;
 `;
 
 const ImgDiv = styled.div`
-  width: 50px;
+  margin-left: 3px;
+  width: 30px;
+  min-width: 30px;
+  min-height: 30px;
   overflow: hidden;
   border-radius: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
+  border: 1px solid #fff;
 `;
 
 export default MessageSenderItem;

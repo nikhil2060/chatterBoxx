@@ -35,6 +35,9 @@ const miscSlice = createSlice({
     setIsSearch: (state, action) => {
       state.isSearch = action.payload;
     },
+    setIsFileMenu: (state, action) => {
+      state.isFileMenu = action.payload;
+    },
     setisDeleteMenu: (state, action) => {
       state.isDeleteMenu = action.payload;
     },
@@ -52,5 +55,10 @@ const miscSlice = createSlice({
 
 export default miscSlice;
 
-export const { setIsNewGroup, setIsAddMember, setIsSearch, setIsNotification } =
-  miscSlice.actions;
+export const {
+  setIsNewGroup,
+  setIsAddMember,
+  setIsSearch,
+  setIsNotification,
+  setIsFileMenu,
+} = miscSlice.actions;

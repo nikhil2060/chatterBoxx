@@ -22,7 +22,7 @@ const OuterDiv = styled.div`
   border-radius: 20px 0px 20px 20px;
 
   display: flex;
-  align-items: start;
+  align-items: center;
   justify-content: space-between;
   gap: 1px;
 
