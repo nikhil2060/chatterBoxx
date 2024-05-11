@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useGetMyChats } from "../features/chatFeatures/useGetMyChats";
-import { setMyChats } from "../redux/reducer/chatSlice";
+import { setMyChats, setCurrentChat } from "../redux/reducer/chatSlice";
 import { setIsNotification, setIsSearch } from "../redux/reducer/miscSlice";
 
 function ContactsContainer() {
@@ -76,6 +76,8 @@ function MyProfile() {
 function ContactsSection() {
   const dispatch = useDispatch();
 
+  const { currentChatId } = useSelector((state) => state.chat);
+
   const { isLoading, error, myChats } = useGetMyChats();
 
   useEffect(() => {
@@ -95,8 +97,7 @@ function ContactsSection() {
           <ContactBox
             key={index}
             contact={contact}
-            // setCurrentContact={setCurrentContact}
-            // isSelected={currentContact._id === contact._id}
+            isSelected={currentChatId === contact._id}
           />
         );
       })}
@@ -104,11 +105,12 @@ function ContactsSection() {
   );
 }
 
-function ContactBox({ contact, isSelected, setCurrentContact }) {
+function ContactBox({ contact, isSelected }) {
+  const dispatch = useDispatch();
+
   return (
     <div
-      // onClick={() => setSelected(contact._id)}
-      onClick={() => setCurrentContact(contact._id)}
+      onClick={() => dispatch(setCurrentChat(contact._id))}
       className={`w-full h-[4.5rem] flex items-center p-5 gap-5 border-b-[1px] border-zinc-400 transition duration-400 ${
         isSelected ? "bg-[#B3D4F2] shadow-md z-50 border-none " : ""
       }`}
