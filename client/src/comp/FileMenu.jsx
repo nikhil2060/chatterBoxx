@@ -43,6 +43,7 @@ const StyledMenu = styled.div`
   border-radius: 0px 20px 0px 0px;
   box-shadow: 0px 0px 10px #33333330;
   transition: bottom 0.5s ease;
+  z-index: 10;
 `;
 
 const StyledItem = styled.div`
