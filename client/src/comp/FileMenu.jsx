@@ -1,8 +1,9 @@
 import { File, Headphones, Image } from "@phosphor-icons/react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 
 function FileMenu() {
+  const menuRef = useRef(null);
   const [menuLoaded, setMenuLoaded] = useState(false);
 
   useEffect(() => {
@@ -13,8 +14,14 @@ function FileMenu() {
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    if (menuRef.current) {
+      menuRef.current.style.bottom = menuLoaded ? "70px" : "0";
+    }
+  }, [menuLoaded]);
+
   return (
-    <StyledMenu menuLoaded={menuLoaded}>
+    <StyledMenu ref={menuRef}>
       <StyledItem>
         <Image size={15} />
         <span>Image</span>
@@ -33,7 +40,7 @@ function FileMenu() {
 
 const StyledMenu = styled.div`
   position: absolute;
-  bottom: ${({ menuLoaded }) => (menuLoaded ? "70px" : "0")};
+  bottom: 0;
   left: 0;
   display: flex;
   flex-direction: column;

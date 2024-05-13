@@ -1,4 +1,4 @@
-const host = `http://localhost:5000`;
+const host = `http://localhost:3000`;
 
 export const getSearchUserRoute = `${host}/api/auth/user/search?name=`;
 

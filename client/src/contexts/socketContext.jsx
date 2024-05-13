@@ -14,7 +14,7 @@ const useSocket = () => {
 
 function SocketProvider({ children }) {
   const socket = useMemo(() => {
-    return io("http://localhost:5000", {
+    return io("http://localhost:3000", {
       withCredentials: "include",
     });
   }, []);
