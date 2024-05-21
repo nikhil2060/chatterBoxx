@@ -25,11 +25,10 @@ const sendToken = (res, user, code, message) => {
 };
 
 const emitEvent = (req, event, users, data) => {
-  console.log("Emittting Event ...");
+  console.log(`Emitting ${event}`);
 };
 
 const uploadFilesToCloudnary = async ([...files]) => {
-  console.log(files);
   const uploadPromises = files.map((file) => {
     return new Promise((resolve, reject) => {
       cloudnary.uploader.upload(

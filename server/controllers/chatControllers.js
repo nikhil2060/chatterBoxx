@@ -2,7 +2,11 @@ const Chat = require("../model/chatModel");
 const User = require("../model/userModel");
 const Message = require("../model/messageModel");
 
-const { emitEvent, deleteFilesFromCloudnary } = require("../utils/features");
+const {
+  emitEvent,
+  deleteFilesFromCloudnary,
+  uploadFilesToCloudnary,
+} = require("../utils/features");
 const {
   ALERT,
   REFETCH_CHATS,
@@ -277,7 +281,7 @@ module.exports.leaveGroup = async (req, res, next) => {
 
 module.exports.sendAttachments = async (req, res, next) => {
   try {
-    const { chatId, userId } = req.body;
+    const { chatId } = req.body;
 
     const files = req.files || [];
 
@@ -299,7 +303,9 @@ module.exports.sendAttachments = async (req, res, next) => {
       });
 
     // UPLOAD FILES
-    const attachments = ["lol", "lol", "lol", "lol"];
+    const attachments = await uploadFilesToCloudnary(files);
+
+    console.log("Attachments:", attachments);
 
     const messageForDB = {
       content: "",
@@ -318,6 +324,8 @@ module.exports.sendAttachments = async (req, res, next) => {
 
     const message = await Message.create(messageForDB);
 
+    console.log(message);
+
     emitEvent(req, NEW_ATTACHMENTS, chat.members, {
       message: messageForRealTime,
       chatId,
@@ -327,7 +335,7 @@ module.exports.sendAttachments = async (req, res, next) => {
 
     return res.status(200).json({
       status: true,
-      message,
+      message: messageForRealTime,
     });
   } catch (error) {
     next(error);

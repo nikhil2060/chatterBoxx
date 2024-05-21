@@ -1,7 +1,9 @@
+import toast from "react-hot-toast";
 import {
   getChatDetailsRoute,
   getMyChatsRoute,
   getChatMessagesRoute,
+  sendAttachmentsRoute,
 } from "../utils/ChatRoutes";
 
 export async function getMyChats() {
@@ -59,5 +61,28 @@ export async function getChatMessages(chatId, page = 1) {
     return data;
   } catch (err) {
     throw Error("Failed in getting chat", err);
+  }
+}
+
+export async function sendAttachments(formData, key) {
+  try {
+    const res = await fetch(sendAttachmentsRoute, {
+      method: "POST",
+      body: formData,
+      credentials: "include",
+    });
+
+    if (!res.ok) throw Error();
+
+    const data = await res.json();
+
+    console.log(data);
+
+    if (data.status) toast.success(`${key} sent successfully`);
+    else toast.error(`failed to send ${key}`);
+
+    return data;
+  } catch (err) {
+    throw Error("Failed in sending attachments", err);
   }
 }

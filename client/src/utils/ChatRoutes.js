@@ -5,3 +5,5 @@ export const getMyChatsRoute = `${host}/api/chat/my`;
 export const getChatDetailsRoute = `${host}/api/chat`;
 
 export const getChatMessagesRoute = `${host}/api/chat/message`;
+
+export const sendAttachmentsRoute = `${host}/api/chat/message`;

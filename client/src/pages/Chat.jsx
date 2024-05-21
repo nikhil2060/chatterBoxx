@@ -27,6 +27,8 @@ import Notification from "../ui/Notification";
 import SearchWindow from "../ui/SearchWindow";
 import ChatHeader from "../comp/ChatHeader";
 import FileMenu from "../comp/FileMenu";
+import MessageSenderPhoto from "../comp/MessageSenderPhoto";
+import MessageReceiverPhoto from "../comp/MessageReceiverPhoto";
 
 function Chat() {
   const { user } = useSelector((state) => state.auth);
@@ -118,18 +120,31 @@ function ChatContainer() {
   if (isLoadingMessages) return <h1>Message loading</h1>;
 
   // const allMessages = [...oldMessages, ...messages];
+  console.log(oldMessageData);
 
   return (
     <div className="w-2/3 h-full bg-zinc-200 rounded-xl shadow-[0_3px_10px_rgb(0,0,0,0.2)] overflow-hidden flex flex-col relative">
       <ChatHeader />
 
       <div className="chat-section w-full shadow-[0_3px_10px_rgb(0,0,0,0.2)] bg-[url('../src/assets/background.jpeg')] bg-contain flex-grow p-4 gap-5 flex flex-col overflow-auto overflow-x-hidden">
-        {isFileMenu && <FileMenu />}
+        {isFileMenu && <FileMenu chatId={currentChatId} />}
 
         {oldMessageData !== undefined &&
           oldMessageData?.message.map((message, i) =>
             message?.sender?._id != user?._id ? (
-              <MessageSenderItem key={i}>{message?.content}</MessageSenderItem>
+              message?.content == "" ? (
+                message?.attachments.map((att, i) => (
+                  <MessageSenderPhoto att={att} key={i} />
+                ))
+              ) : (
+                <MessageSenderItem key={i}>
+                  {message?.content}
+                </MessageSenderItem>
+              )
+            ) : message?.content == "" ? (
+              message?.attachments.map((att, i) => (
+                <MessageReceiverPhoto att={att} key={i} />
+              ))
             ) : (
               <MessageReceiverItem key={i}>
                 {message?.content}

@@ -1,10 +1,16 @@
-import { File, Headphones, Image } from "@phosphor-icons/react";
+import { Video, Headphones, Image, File } from "@phosphor-icons/react";
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
+import toast from "react-hot-toast";
+import { useSendAttachments } from "../features/chatFeatures/useSendAttachments";
+import { useDispatch } from "react-redux";
+import { setIsFileMenu } from "../redux/reducer/miscSlice";
 
-function FileMenu() {
+function FileMenu({ chatId }) {
   const menuRef = useRef(null);
   const [menuLoaded, setMenuLoaded] = useState(false);
+  const dispatch = useDispatch();
+  const { isSending, mutateSend } = useSendAttachments();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -20,19 +26,80 @@ function FileMenu() {
     }
   }, [menuLoaded]);
 
+  const fileChangeHandler = async (e, key) => {
+    const files = Array.from(e.target.files);
+
+    if (files.length <= 0) {
+      return;
+    }
+
+    if (files.length > 5) toast.error("Select files less than 5");
+
+    const formData = new FormData();
+
+    formData.append("chatId", chatId);
+
+    files.forEach((file) => formData.append("files", file));
+
+    try {
+      const res = await mutateSend({ formData, key });
+    } catch (error) {
+      toast.error(error);
+    } finally {
+      setMenuLoaded(false);
+      dispatch(setIsFileMenu(false));
+    }
+  };
+
   return (
     <StyledMenu ref={menuRef}>
       <StyledItem>
         <Image size={15} />
-        <span>Image</span>
+        <label htmlFor="image">Image</label>
+        <input
+          type="file"
+          id="image"
+          accept="image/png, image/jpeg, image/gif"
+          hidden
+          multiple
+          onChange={(e) => fileChangeHandler(e, "Images")}
+        />
       </StyledItem>
       <StyledItem>
         <Headphones size={15} />
-        <span>Audio</span>
+        <label htmlFor="audio">Audio</label>
+        <input
+          type="file"
+          id="audio"
+          accept="audio/mpeg, audio/wav, audio/ogg"
+          hidden
+          multiple
+          onChange={(e) => fileChangeHandler(e, "Audios")}
+        />
+      </StyledItem>
+      <StyledItem>
+        <Video size={15} />
+        <label htmlFor="video">Video</label>
+        <input
+          type="file"
+          id="video"
+          accept="video/mp4, video/webm, video/ogg"
+          hidden
+          multiple
+          onChange={(e) => fileChangeHandler(e, "Videos")}
+        />
       </StyledItem>
       <StyledItem>
         <File size={15} />
-        <span>File</span>
+        <label htmlFor="file">File</label>
+        <input
+          type="file"
+          id="file"
+          accept="*"
+          hidden
+          multiple
+          onChange={(e) => fileChangeHandler(e, "files")}
+        />
       </StyledItem>
     </StyledMenu>
   );
@@ -54,7 +121,6 @@ const StyledMenu = styled.div`
 `;
 
 const StyledItem = styled.div`
-  /* width: 40px; */
   background-color: #b4d4f2;
   font-size: 12px;
   padding: 4px 10px 4px 10px;

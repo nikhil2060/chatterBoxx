@@ -1,5 +1,16 @@
 const mongoose = require("mongoose");
 
+const attachmentSchema = new mongoose.Schema({
+  public_id: {
+    type: String,
+    required: true,
+  },
+  url: {
+    type: String,
+    required: true,
+  },
+});
+
 const messageSchema = new mongoose.Schema(
   {
     content: String,
@@ -12,16 +23,7 @@ const messageSchema = new mongoose.Schema(
       type: mongoose.Types.ObjectId,
       ref: "Chat",
     },
-    attachments: {
-      public_id: {
-        type: String,
-        default: "",
-      },
-      url: {
-        type: String,
-        default: "",
-      },
-    },
+    attachments: [attachmentSchema],
   },
   {
     timestamps: true,
