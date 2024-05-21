@@ -12,6 +12,7 @@ const {
   REFETCH_CHATS,
   NEW_ATTACHMENTS,
   NEW_MESSAGE_ALERT,
+  NEW_MESSAGE,
 } = require("../constants/events");
 const { getOtherMembers } = require("../lib/helper");
 
@@ -326,7 +327,7 @@ module.exports.sendAttachments = async (req, res, next) => {
 
     console.log(message);
 
-    emitEvent(req, NEW_ATTACHMENTS, chat.members, {
+    emitEvent(req, NEW_MESSAGE, chat.members, {
       message: messageForRealTime,
       chatId,
     });

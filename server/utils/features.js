@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const { v4: uuid } = require("uuid");
 const { v2: cloudnary } = require("cloudinary");
 const { getBase64 } = require("../middlewares/helper");
+const { getSockets } = require("../lib/helper");
 
 const cookieOptions = {
   maxAge: 15 * 24 * 60 * 60 * 1000,
@@ -25,7 +26,9 @@ const sendToken = (res, user, code, message) => {
 };
 
 const emitEvent = (req, event, users, data) => {
-  console.log(`Emitting ${event}`);
+  let io = req.app.get("io");
+  const membersSocket = getSockets(users);
+  io.to(membersSocket).emit(event, data);
 };
 
 const uploadFilesToCloudnary = async ([...files]) => {

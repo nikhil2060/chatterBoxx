@@ -16,6 +16,7 @@ const { socketAuthenticator } = require("./middlewares/auth");
 const userRoutes = require("./routes/userRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 const Message = require("./model/messageModel");
+const { userSocketIDs } = require("./lib/helper");
 
 const corsOptions = {
   origin: [
@@ -30,6 +31,8 @@ const corsOptions = {
 const app = express();
 const server = createServer(app);
 const io = new Server(server, { cors: corsOptions });
+
+app.set("io", io);
 
 require("dotenv").config();
 
@@ -66,13 +69,6 @@ io.use((socket, next) => {
     await socketAuthenticator(err, socket, next);
   });
 });
-
-const userSocketIDs = new Map();
-
-const getSockets = (users = []) => {
-  const sockets = users.map((user) => userSocketIDs.get(user.toString()));
-  return sockets;
-};
 
 io.on("connection", (socket) => {
   const user = socket.user;
@@ -125,8 +121,6 @@ server.listen(process.env.PORT, () => {
     `Server started on ${process.env.PORT} in ${process.env.NODE_ENV} Mode`
   );
 });
-
-module.exports = userSocketIDs;
 
 // createUser(10);
 

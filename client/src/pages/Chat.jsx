@@ -122,6 +122,8 @@ function ChatContainer() {
   // const allMessages = [...oldMessages, ...messages];
   console.log(oldMessageData);
 
+  console.log(messages);
+
   return (
     <div className="w-2/3 h-full bg-zinc-200 rounded-xl shadow-[0_3px_10px_rgb(0,0,0,0.2)] overflow-hidden flex flex-col relative">
       <ChatHeader />
@@ -154,9 +156,19 @@ function ChatContainer() {
 
         {messages.map((message, i) =>
           message?.message?.sender?._id != user?._id ? (
-            <MessageSenderItem key={i}>
-              {message?.message?.content}
-            </MessageSenderItem>
+            message?.message?.content === "" ? (
+              message?.message?.attachments.map((att, i) => (
+                <MessageSenderPhoto att={att} key={i} />
+              ))
+            ) : (
+              <MessageSenderItem key={i}>
+                {message?.message?.content}
+              </MessageSenderItem>
+            )
+          ) : message?.message?.content === "" ? (
+            message?.message?.attachments.map((att, i) => (
+              <MessageReceiverPhoto att={att} key={i} />
+            ))
           ) : (
             <MessageReceiverItem key={i}>
               {message?.message?.content}

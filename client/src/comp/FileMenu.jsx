@@ -43,6 +43,7 @@ function FileMenu({ chatId }) {
 
     try {
       const res = await mutateSend({ formData, key });
+      toast("Sending...");
     } catch (error) {
       toast.error(error);
     } finally {
