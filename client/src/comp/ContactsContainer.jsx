@@ -1,12 +1,12 @@
-import { BellRinging, UserCirclePlus, UsersThree } from "@phosphor-icons/react";
+import { Bell, UserCirclePlus, UsersThree } from "@phosphor-icons/react";
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 
 import { CircularProgress } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useGetMyChats } from "../features/chatFeatures/useGetMyChats";
-import { setMyChats, setCurrentChat } from "../redux/reducer/chatSlice";
+import { setCurrentChat, setMyChats } from "../redux/reducer/chatSlice";
 import { setIsNotification, setIsSearch } from "../redux/reducer/miscSlice";
+import { resetNotificatinCount } from "../redux/reducer/chatNoteSlice";
 
 function ContactsContainer() {
   const dispatch = useDispatch();
@@ -16,6 +16,8 @@ function ContactsContainer() {
 
   const { isSearch, isNotification } = useSelector((state) => state.misc);
 
+  const { notificationCount } = useSelector((state) => state.chatNoti);
+
   if (!user) return <h1>LOADING</h1>;
 
   const handleSearchClick = () => {
@@ -24,6 +26,7 @@ function ContactsContainer() {
 
   const handleNotificationClick = () => {
     dispatch(setIsNotification(!isNotification));
+    dispatch(resetNotificatinCount());
   };
 
   return (
@@ -36,12 +39,18 @@ function ContactsContainer() {
           <img src={user.avatar.url} alt="profilePic" />
         </div>
         <div className="flex items-center gap-3">
-          <BellRinging
-            size={24}
-            color="#00223f"
-            className="mouse-cursor"
-            onClick={handleNotificationClick}
-          />
+          <div className="relative">
+            <Bell
+              size={24}
+              color="#00223f"
+              className="mouse-cursor"
+              onClick={notificationCount ? handleNotificationClick : null}
+            />
+            <span className="absolute top-0 right-0 bg-red-500 rounded-full text-white text-[10px] flex items-center justify-center w-3 h-3">
+              {notificationCount}
+            </span>
+          </div>
+
           <UserCirclePlus
             size={24}
             color="#00223f"

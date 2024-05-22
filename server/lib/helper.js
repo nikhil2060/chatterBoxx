@@ -2,7 +2,6 @@ const getOtherMembers = (members, userId) => {
   return members.find((member) => member._id.toString() !== userId.toString());
 };
 
-// socketManager.js
 const userSocketIDs = new Map();
 
 const getSockets = (users = []) => {

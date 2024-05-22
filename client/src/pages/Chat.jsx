@@ -1,12 +1,8 @@
 import { PaperPlaneRight, Paperclip } from "@phosphor-icons/react";
-import axios from "axios";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-
 import { useSocket } from "../contexts/socketContext";
-import { userNotExists } from "../redux/reducer/authSlice";
 
 import {
   useGetChatDetails,
@@ -14,28 +10,51 @@ import {
 } from "../features/chatFeatures/useChatDetails";
 import useSocketEvents from "../hooks/useSocketEvents";
 
-import { NEW_MESSAGE } from "../contants/event";
-import { logOutRoute } from "../utils/AuthRoutes";
+import { NEW_MESSAGE, NEW_MESSAGE_ALERT, NEW_REQUEST } from "../contants/event";
 
+import ChatHeader from "../comp/ChatHeader";
 import ContactsContainer from "../comp/ContactsContainer";
+import FileMenu from "../comp/FileMenu";
 import MessageReceiverItem from "../comp/MessageReceiverItem";
+import MessageReceiverPhoto from "../comp/MessageReceiverPhoto";
 import MessageSenderItem from "../comp/MessageSenderItem";
+import MessageSenderPhoto from "../comp/MessageSenderPhoto";
 import { setIsFileMenu } from "../redux/reducer/miscSlice";
 import Modal from "../ui/Modal";
 import NotificationModal from "../ui/ModalNotification";
 import Notification from "../ui/Notification";
 import SearchWindow from "../ui/SearchWindow";
-import ChatHeader from "../comp/ChatHeader";
-import FileMenu from "../comp/FileMenu";
-import MessageSenderPhoto from "../comp/MessageSenderPhoto";
-import MessageReceiverPhoto from "../comp/MessageReceiverPhoto";
+import { incrementNotificatinCount } from "../redux/reducer/chatNoteSlice";
+import toast from "react-hot-toast";
 
 function Chat() {
   const { user } = useSelector((state) => state.auth);
-
   const { isSearch, isNotification } = useSelector((state) => state.misc);
-
   const navigate = useNavigate();
+  const { socket } = useSocket();
+  const dispatch = useDispatch();
+
+  const newMessageHandler = useCallback(() => {
+    toast("🔔 New message ", {
+      duration: 2000,
+      position: "top-right",
+    });
+  }, []);
+
+  const newRequestHandler = useCallback(() => {
+    dispatch(incrementNotificatinCount());
+    toast("🔔 New request ", {
+      duration: 2000,
+      position: "top-right",
+    });
+  }, [dispatch]);
+
+  const eventHandler = {
+    [NEW_REQUEST]: newRequestHandler,
+    [NEW_MESSAGE_ALERT]: newMessageHandler,
+  };
+
+  useSocketEvents(socket, eventHandler);
 
   useEffect(() => {
     if (!user) {
@@ -120,9 +139,7 @@ function ChatContainer() {
   if (isLoadingMessages) return <h1>Message loading</h1>;
 
   // const allMessages = [...oldMessages, ...messages];
-  console.log(oldMessageData);
-
-  console.log(messages);
+  // console.log(oldMessageData);
 
   return (
     <div className="w-2/3 h-full bg-zinc-200 rounded-xl shadow-[0_3px_10px_rgb(0,0,0,0.2)] overflow-hidden flex flex-col relative">
@@ -187,6 +204,8 @@ function ChatInput({ chatId, members }) {
   const dispatch = useDispatch();
   const { socket } = useSocket();
 
+  const { isFileMenu } = useSelector((state) => state.misc);
+
   const handleSendMessage = () => {
     if (!message.trim()) return;
     // emiiting message to the server
@@ -195,7 +214,7 @@ function ChatInput({ chatId, members }) {
   };
 
   const handleFileOpen = () => {
-    dispatch(setIsFileMenu(true));
+    dispatch(setIsFileMenu(!isFileMenu));
   };
 
   return (

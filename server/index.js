@@ -16,7 +16,7 @@ const { socketAuthenticator } = require("./middlewares/auth");
 const userRoutes = require("./routes/userRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 const Message = require("./model/messageModel");
-const { userSocketIDs } = require("./lib/helper");
+const { userSocketIDs, getSockets } = require("./lib/helper");
 
 const corsOptions = {
   origin: [
