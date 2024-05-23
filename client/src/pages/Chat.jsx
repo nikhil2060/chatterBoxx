@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useSocket } from "../contexts/socketContext";
 
+// import { scrollINTO } from "6pp";
+
 import {
   useGetChatDetails,
   useGetChatMessages,
@@ -25,7 +27,11 @@ import MessageReceiverItem from "../comp/MessageReceiverItem";
 import MessageReceiverPhoto from "../comp/MessageReceiverPhoto";
 import MessageSenderItem from "../comp/MessageSenderItem";
 import MessageSenderPhoto from "../comp/MessageSenderPhoto";
-import { setIamTyping, setIsFileMenu } from "../redux/reducer/miscSlice";
+import {
+  setIamTyping,
+  setIsFileMenu,
+  setUserTyping,
+} from "../redux/reducer/miscSlice";
 import Modal from "../ui/Modal";
 import NotificationModal from "../ui/ModalNotification";
 import Notification from "../ui/Notification";
@@ -39,18 +45,19 @@ function Chat() {
   const navigate = useNavigate();
   const { socket } = useSocket();
   const dispatch = useDispatch();
-  const [userTyping, setUserTyping] = useState(false);
-
-  const typingTimeout = useRef(null);
 
   const { currentChatId } = useSelector((state) => state.chat);
 
-  const newMessageHandler = useCallback(() => {
-    toast("🔔 New message ", {
-      duration: 2000,
-      position: "top-right",
-    });
-  }, []);
+  const newMessageHandler = useCallback(
+    (data) => {
+      if (user?._id != data?.chatId) return;
+      toast("🔔 New message ", {
+        duration: 2000,
+        position: "top-right",
+      });
+    },
+    [user?._id]
+  );
 
   const newRequestHandler = useCallback(() => {
     dispatch(incrementNotificatinCount());
@@ -60,16 +67,28 @@ function Chat() {
     });
   }, [dispatch]);
 
-  const startTypingHandler = useCallback((data) => {
-    // if (user?._id != data?.chatId) return;
-    console.log(data);
-    console.log("Tpying");
-  }, []);
+  const startTypingHandler = useCallback(
+    (data) => {
+      if (user?._id != data?.chatId) return;
+      console.log("Typing");
+      dispatch(setUserTyping(true));
+    },
+    [user?._id, dispatch]
+  );
+
+  const stopTypingHandler = useCallback(
+    (data) => {
+      if (user?._id != data?.chatId) return;
+      dispatch(setUserTyping(false));
+    },
+    [user?._id, dispatch]
+  );
 
   const eventHandler = {
     [NEW_REQUEST]: newRequestHandler,
     [NEW_MESSAGE_ALERT]: newMessageHandler,
     [START_TYPING]: startTypingHandler,
+    [STOP_TYPING]: stopTypingHandler,
   };
 
   useSocketEvents(socket, eventHandler);
@@ -110,10 +129,16 @@ function ChatContainer() {
   const [page, setPage] = useState(1);
 
   const containerRef = useRef(null);
+  const bottomRef = useRef(null);
 
   const { user } = useSelector((state) => state.auth);
   const { currentChatId } = useSelector((state) => state.chat);
-  const { isFileMenu } = useSelector((state) => state.misc);
+  const { isFileMenu, userTyping } = useSelector((state) => state.misc);
+
+  useEffect(() => {
+    if (bottomRef.current)
+      bottomRef.current.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   const {
     isLoading,
@@ -210,6 +235,8 @@ function ChatContainer() {
             </MessageReceiverItem>
           )
         )}
+
+        <div ref={bottomRef} />
       </div>
 
       <ChatInput chatId={chatData?._id} members={chatData?.members} />
@@ -221,6 +248,7 @@ function ChatInput({ chatId, members }) {
   const [message, setMessage] = useState("");
   const dispatch = useDispatch();
   const { socket } = useSocket();
+  const typingTimeout = useRef(null);
 
   const { isFileMenu, iamTyping, userTyping } = useSelector(
     (state) => state.misc
@@ -239,12 +267,15 @@ function ChatInput({ chatId, members }) {
 
   const handleChangeInput = (e) => {
     setMessage(e.target.value);
+
     if (!iamTyping) {
       socket.emit(START_TYPING, { chatId, members });
       dispatch(setIamTyping(true));
     }
 
-    setTimeout(() => {
+    if (typingTimeout.current) clearTimeout(typingTimeout.current);
+
+    typingTimeout.current = setTimeout(() => {
       socket.emit(STOP_TYPING, { chatId, members });
       dispatch(setIamTyping(true));
     }, [2000]);
