@@ -10,7 +10,11 @@ const { v4: uuid } = require("uuid");
 
 const { v2: cloudnary } = require("cloudinary");
 
-const { NEW_MESSAGE, NEW_MESSAGE_ALERT } = require("./constants/events");
+const {
+  NEW_MESSAGE,
+  NEW_MESSAGE_ALERT,
+  START_TYPING,
+} = require("./constants/events");
 const { socketAuthenticator } = require("./middlewares/auth");
 
 const userRoutes = require("./routes/userRoutes");
@@ -76,6 +80,11 @@ io.on("connection", (socket) => {
   userSocketIDs.set(user?._id?.toString(), socket?.id);
 
   console.log("User Connected", socket.id);
+
+  socket.on(START_TYPING, ({ members, chatId }) => {
+    const membersSocket = getSockets(members);
+    socket.to(membersSocket).emit(START_TYPING, { chatId });
+  });
 
   socket.on(NEW_MESSAGE, async ({ chatId, members, message }) => {
     const messageForRealtime = {

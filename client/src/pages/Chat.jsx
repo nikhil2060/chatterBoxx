@@ -10,7 +10,13 @@ import {
 } from "../features/chatFeatures/useChatDetails";
 import useSocketEvents from "../hooks/useSocketEvents";
 
-import { NEW_MESSAGE, NEW_MESSAGE_ALERT, NEW_REQUEST } from "../contants/event";
+import {
+  NEW_MESSAGE,
+  NEW_MESSAGE_ALERT,
+  NEW_REQUEST,
+  START_TYPING,
+  STOP_TYPING,
+} from "../contants/event";
 
 import ChatHeader from "../comp/ChatHeader";
 import ContactsContainer from "../comp/ContactsContainer";
@@ -19,7 +25,7 @@ import MessageReceiverItem from "../comp/MessageReceiverItem";
 import MessageReceiverPhoto from "../comp/MessageReceiverPhoto";
 import MessageSenderItem from "../comp/MessageSenderItem";
 import MessageSenderPhoto from "../comp/MessageSenderPhoto";
-import { setIsFileMenu } from "../redux/reducer/miscSlice";
+import { setIamTyping, setIsFileMenu } from "../redux/reducer/miscSlice";
 import Modal from "../ui/Modal";
 import NotificationModal from "../ui/ModalNotification";
 import Notification from "../ui/Notification";
@@ -33,6 +39,11 @@ function Chat() {
   const navigate = useNavigate();
   const { socket } = useSocket();
   const dispatch = useDispatch();
+  const [userTyping, setUserTyping] = useState(false);
+
+  const typingTimeout = useRef(null);
+
+  const { currentChatId } = useSelector((state) => state.chat);
 
   const newMessageHandler = useCallback(() => {
     toast("🔔 New message ", {
@@ -49,9 +60,16 @@ function Chat() {
     });
   }, [dispatch]);
 
+  const startTypingHandler = useCallback((data) => {
+    // if (user?._id != data?.chatId) return;
+    console.log(data);
+    console.log("Tpying");
+  }, []);
+
   const eventHandler = {
     [NEW_REQUEST]: newRequestHandler,
     [NEW_MESSAGE_ALERT]: newMessageHandler,
+    [START_TYPING]: startTypingHandler,
   };
 
   useSocketEvents(socket, eventHandler);
@@ -204,7 +222,9 @@ function ChatInput({ chatId, members }) {
   const dispatch = useDispatch();
   const { socket } = useSocket();
 
-  const { isFileMenu } = useSelector((state) => state.misc);
+  const { isFileMenu, iamTyping, userTyping } = useSelector(
+    (state) => state.misc
+  );
 
   const handleSendMessage = () => {
     if (!message.trim()) return;
@@ -215,6 +235,19 @@ function ChatInput({ chatId, members }) {
 
   const handleFileOpen = () => {
     dispatch(setIsFileMenu(!isFileMenu));
+  };
+
+  const handleChangeInput = (e) => {
+    setMessage(e.target.value);
+    if (!iamTyping) {
+      socket.emit(START_TYPING, { chatId, members });
+      dispatch(setIamTyping(true));
+    }
+
+    setTimeout(() => {
+      socket.emit(STOP_TYPING, { chatId, members });
+      dispatch(setIamTyping(true));
+    }, [2000]);
   };
 
   return (
@@ -231,7 +264,7 @@ function ChatInput({ chatId, members }) {
         value={message}
         placeholder="type something..."
         className="w-full h-1/2 rounded-full p-5 text-sm"
-        onChange={(e) => setMessage(e.target.value)}
+        onChange={handleChangeInput}
       />
 
       <button

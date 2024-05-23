@@ -9,6 +9,8 @@ const initialState = {
   isFileMenu: false,
   isDeleteMenu: false,
   uploadingLoader: false,
+  iamTyping: false,
+  userTyping: false,
   selectedDeleteChat: {
     chatId: "",
     groupChat: false,
@@ -50,6 +52,12 @@ const miscSlice = createSlice({
     setSelectedChat: (state, action) => {
       state.selectedChat = action.payload;
     },
+    setIamTyping: (state, action) => {
+      state.iamTyping = action.payload;
+    },
+    setUserTyping: (state, action) => {
+      state.userTyping = action.payload;
+    },
   },
 });
 
@@ -61,4 +69,6 @@ export const {
   setIsSearch,
   setIsNotification,
   setIsFileMenu,
+  setIamTyping,
+  setUserTyping,
 } = miscSlice.actions;
