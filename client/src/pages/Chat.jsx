@@ -136,8 +136,12 @@ function ChatContainer() {
   const { isFileMenu, userTyping } = useSelector((state) => state.misc);
 
   useEffect(() => {
-    if (bottomRef.current)
+    if (bottomRef.current) {
+      console.log("Scrolling to bottom...");
       bottomRef.current.scrollIntoView({ behavior: "smooth" });
+    } else {
+      console.log("bottomRef is null");
+    }
   }, [messages]);
 
   const {
@@ -158,6 +162,11 @@ function ChatContainer() {
     refetch();
     refetchMesseages();
   }, [refetch, currentChatId, refetchMesseages]);
+
+  useEffect(() => {
+    setMessages([]);
+    setPage(1);
+  }, [currentChatId]);
 
   // const { data: oldMessages, setData: setOldMessages } = useInfiniteScrollTop(
   //   containerRef,
@@ -281,6 +290,12 @@ function ChatInput({ chatId, members }) {
     }, [2000]);
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleSendMessage();
+    }
+  };
+
   return (
     <div className="chat-header w-full min-h-[4.5rem] rounded-b-xl bg-zinc-100 shadow-[0_3px_10px_rgb(0,0,0,0.2)] z-20 flex items-center pl-6 pr-6 gap-5 justify-between">
       <button
@@ -296,6 +311,7 @@ function ChatInput({ chatId, members }) {
         placeholder="type something..."
         className="w-full h-1/2 rounded-full p-5 text-sm"
         onChange={handleChangeInput}
+        onKeyDown={handleKeyDown}
       />
 
       <button
