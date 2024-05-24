@@ -1,4 +1,10 @@
-import { Bell, UserCirclePlus, UsersThree } from "@phosphor-icons/react";
+import {
+  Bell,
+  UserCirclePlus,
+  Users,
+  UsersFour,
+  UsersThree,
+} from "@phosphor-icons/react";
 import React, { useEffect, useState } from "react";
 
 import { CircularProgress } from "@mui/material";
@@ -7,11 +13,15 @@ import { useGetMyChats } from "../features/chatFeatures/useGetMyChats";
 import { setCurrentChat, setMyChats } from "../redux/reducer/chatSlice";
 import { setIsNotification, setIsSearch } from "../redux/reducer/miscSlice";
 import { resetNotificatinCount } from "../redux/reducer/chatNoteSlice";
+import ChatsList from "./ChatsList";
+import GroupsList from "./GroupsList";
 
 function ContactsContainer() {
   const dispatch = useDispatch();
 
   const [openMyProfile, setOpenMyProfile] = useState(false);
+  const [openGroupSection, setOpenGroupSection] = useState(false);
+
   const { user } = useSelector((state) => state.auth);
 
   const { isSearch, isNotification } = useSelector((state) => state.misc);
@@ -27,6 +37,10 @@ function ContactsContainer() {
   const handleNotificationClick = () => {
     dispatch(setIsNotification(!isNotification));
     dispatch(resetNotificatinCount());
+  };
+
+  const handleOpenGroupList = () => {
+    setOpenGroupSection(!openGroupSection);
   };
 
   return (
@@ -56,11 +70,26 @@ function ContactsContainer() {
             color="#00223f"
             onClick={handleSearchClick}
           />
-          <UsersThree size={24} color="#00223f" />
+
+          {openGroupSection ? (
+            <Users size={24} color="#00223f" onClick={handleOpenGroupList} />
+          ) : (
+            <UsersFour
+              size={24}
+              color="#00223f"
+              onClick={handleOpenGroupList}
+            />
+          )}
         </div>
       </div>
 
-      {openMyProfile ? <MyProfile /> : <ContactsSection />}
+      {openMyProfile ? (
+        <MyProfile />
+      ) : openGroupSection ? (
+        <GroupsList />
+      ) : (
+        <ChatsList />
+      )}
     </div>
   );
 }
@@ -78,56 +107,6 @@ function MyProfile() {
         <span>Name : {user.name}</span>
         <span>ABOUt</span>
       </div>
-    </div>
-  );
-}
-
-function ContactsSection() {
-  const dispatch = useDispatch();
-
-  const { currentChatId } = useSelector((state) => state.chat);
-
-  const { isLoading, error, myChats } = useGetMyChats();
-
-  useEffect(() => {
-    if (!isLoading) {
-      dispatch(setMyChats(myChats));
-    }
-  }, [isLoading, myChats, dispatch]);
-
-  return isLoading ? (
-    <div className="chat-section w-full bg-zinc-100 flex-grow overflow-auto rounded-b-xl">
-      <CircularProgress />
-    </div>
-  ) : (
-    <div className="chat-section w-full bg-zinc-100 flex-grow overflow-auto rounded-b-xl">
-      {myChats.map((contact, index) => {
-        return (
-          <ContactBox
-            key={index}
-            contact={contact}
-            isSelected={currentChatId === contact._id}
-          />
-        );
-      })}
-    </div>
-  );
-}
-
-function ContactBox({ contact, isSelected }) {
-  const dispatch = useDispatch();
-
-  return (
-    <div
-      onClick={() => dispatch(setCurrentChat(contact._id))}
-      className={`w-full h-[4.5rem] flex items-center p-5 gap-5 border-b-[1px] border-zinc-400 transition duration-400 ${
-        isSelected ? "bg-[#B3D4F2] shadow-md z-50 border-none " : ""
-      }`}
-    >
-      <div className="image-box w-10 h-10 bg-zinc-600 rounded-full overflow-hidden bg-cover ">
-        <img src={contact.avatar[0]} alt="profilePic" />
-      </div>
-      <span>{contact.name}</span>
     </div>
   );
 }
