@@ -1,5 +1,6 @@
 import {
   Bell,
+  DotsThreeOutlineVertical,
   UserCirclePlus,
   Users,
   UsersFour,
@@ -15,12 +16,14 @@ import { setIsNotification, setIsSearch } from "../redux/reducer/miscSlice";
 import { resetNotificatinCount } from "../redux/reducer/chatNoteSlice";
 import ChatsList from "./ChatsList";
 import GroupsList from "./GroupsList";
+import UserMenu from "./userActionMenu";
 
 function ContactsContainer() {
   const dispatch = useDispatch();
 
   const [openMyProfile, setOpenMyProfile] = useState(false);
   const [openGroupSection, setOpenGroupSection] = useState(false);
+  const [userMenuLoaded, setUserMenuLoaded] = useState(false);
 
   const { user } = useSelector((state) => state.auth);
 
@@ -43,8 +46,12 @@ function ContactsContainer() {
     setOpenGroupSection(!openGroupSection);
   };
 
+  const handleUserMenuLoaded = () => {
+    setUserMenuLoaded(!userMenuLoaded);
+  };
+
   return (
-    <div className="w-1/3 h-full bg-zinc-200 rounded-xl shadow-[0_3px_10px_rgb(0,0,0,0.2)] overflow-hidden flex flex-col">
+    <div className="w-1/3 h-full bg-zinc-200 rounded-xl shadow-[0_3px_10px_rgb(0,0,0,0.2)] overflow-hidden flex flex-col relative">
       <div className="chat-header w-full min-h-[4.5rem] rounded-t-xl bg-zinc-100 shadow-[0_3px_10px_rgb(0,0,0,0.2)] z-20 flex items-center pl-6 pr-6 justify-between">
         <div
           className="w-12 h-12 bg-red-200 rounded-full overflow-hidden bg-contain border-[#00223f] border-[1.5px]"
@@ -80,6 +87,12 @@ function ContactsContainer() {
               onClick={handleOpenGroupList}
             />
           )}
+
+          <DotsThreeOutlineVertical
+            size={24}
+            color="#00223f"
+            onClick={handleUserMenuLoaded}
+          />
         </div>
       </div>
 
@@ -90,6 +103,8 @@ function ContactsContainer() {
       ) : (
         <ChatsList />
       )}
+
+      {userMenuLoaded && <UserMenu />}
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { getMyChats, getMyGroups } from "../../services/apiChat";
+import { getMyChats } from "../../services/apiChat";
+import { getMyGroups } from "../../services/apiGroup";
 
 export function useGetMyChats() {
   const {

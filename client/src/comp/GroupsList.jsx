@@ -14,13 +14,15 @@ function GroupsList() {
 
   const { isLoading, error, myGroups } = useGetMyGroups();
 
-  console.log(myGroups);
+  if (error) console.log(error);
 
-  //   useEffect(() => {
-  //     if (!isLoading) {
-  //       dispatch(setMyChats(myChats));
-  //     }
-  //   }, [isLoading, myChats, dispatch]);
+  useEffect(() => {
+    if (!isLoading) {
+      dispatch(setMyChats(myGroups));
+    }
+  }, [isLoading, myGroups, dispatch]);
+
+  console.log(myGroups);
 
   return isLoading ? (
     <div className="chat-section w-full bg-zinc-100 flex-grow overflow-auto rounded-b-xl">

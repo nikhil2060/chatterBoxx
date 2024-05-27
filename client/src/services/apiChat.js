@@ -87,22 +87,3 @@ export async function sendAttachments(formData, key) {
     throw Error("Failed in sending attachments", err);
   }
 }
-
-export async function getMyGroups() {
-  try {
-    const res = await fetch(getMyGroupsRoute, {
-      method: "GET",
-      credentials: "include",
-    });
-
-    if (!res.ok) throw Error();
-
-    const { groups } = await res.json();
-
-    console.log(groups);
-
-    return groups;
-  } catch (err) {
-    throw Error("Failed in getting groups", err);
-  }
-}

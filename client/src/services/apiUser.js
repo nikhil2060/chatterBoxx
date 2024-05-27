@@ -1,6 +1,7 @@
 import toast from "react-hot-toast";
 import {
   acceptRequestRoute,
+  getMyFriendsRoute,
   getNotificationsRoute,
   getSearchUserRoute,
   sendRequestRoute,
@@ -87,5 +88,29 @@ export async function acceptRequest(requestId, accept) {
     return data;
   } catch (err) {
     throw Error("Failed in sending request", err);
+  }
+}
+
+export async function getMyFriends({ chatId }) {
+  let url = getMyFriendsRoute;
+  if (chatId) {
+    url += `/${chatId}`;
+  }
+
+  try {
+    const res = await fetch(url, {
+      method: "GET",
+      credentials: "include",
+    });
+
+    if (!res.ok) throw Error();
+
+    const data = await res.json();
+
+    console.log(data);
+
+    return data;
+  } catch (err) {
+    throw Error("Failed in getting notifications", err);
   }
 }

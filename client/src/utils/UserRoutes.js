@@ -7,3 +7,5 @@ export const sendRequestRoute = `${host}/api/auth/user/sendRequest`;
 export const getNotificationsRoute = `${host}/api/auth/user/notifications`;
 
 export const acceptRequestRoute = `${host}/api/auth/user/acceptRequest`;
+
+export const getMyFriendsRoute = `${host}/api/auth/user/friends`;
