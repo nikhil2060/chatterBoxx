@@ -14,16 +14,3 @@ export function useGetMyChats() {
 
   return { isLoading, error, myChats };
 }
-
-export function useGetMyGroups() {
-  const {
-    isLoading,
-    data: myGroups,
-    error,
-  } = useQuery({
-    queryKey: ["myGroups"],
-    queryFn: getMyGroups,
-  });
-
-  return { isLoading, error, myGroups };
-}

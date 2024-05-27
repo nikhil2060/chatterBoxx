@@ -2,11 +2,9 @@ import React, { useEffect } from "react";
 
 import { CircularProgress } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  useGetMyChats,
-  useGetMyGroups,
-} from "../features/chatFeatures/useGetMyChats";
+import { useGetMyChats } from "../features/chatFeatures/useGetMyChats";
 import { setCurrentChat, setMyChats } from "../redux/reducer/chatSlice";
+import { useGetMyGroups } from "../features/GroupFeatures/useCreateGroup";
 
 function GroupsList() {
   const dispatch = useDispatch();

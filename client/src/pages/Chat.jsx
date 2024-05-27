@@ -92,7 +92,7 @@ function Chat() {
         </Modal>
       )}
 
-      {isCreateGroup && <CreateGroup />}
+      {isCreateGroup && <CreateGroup chatId={user?._id} />}
 
       {isNotification && (
         <NotificationModal>

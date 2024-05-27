@@ -91,11 +91,11 @@ export async function acceptRequest(requestId, accept) {
   }
 }
 
-export async function getMyFriends({ chatId }) {
+export async function getMyFriends(chatId = "") {
   let url = getMyFriendsRoute;
-  if (chatId) {
-    url += `/${chatId}`;
-  }
+  // if (chatId != "") {
+  //   url += `?chatId=${chatId}`;
+  // }
 
   try {
     const res = await fetch(url, {
@@ -105,12 +105,10 @@ export async function getMyFriends({ chatId }) {
 
     if (!res.ok) throw Error();
 
-    const data = await res.json();
+    const { friends } = await res.json();
 
-    console.log(data);
-
-    return data;
+    return friends;
   } catch (err) {
-    throw Error("Failed in getting notifications", err);
+    throw Error("Failed in getting friends", err);
   }
 }

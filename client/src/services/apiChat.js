@@ -4,7 +4,6 @@ import {
   getMyChatsRoute,
   getChatMessagesRoute,
   sendAttachmentsRoute,
-  getMyGroupsRoute,
 } from "../utils/ChatRoutes";
 
 export async function getMyChats() {
