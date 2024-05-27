@@ -1,7 +1,8 @@
 import React from "react";
+import CreateGroupModal from "../ui/CreateGroupModal";
 
 function CreateGroup() {
-  return <div>CreateGroup</div>;
+  return <CreateGroupModal></CreateGroupModal>;
 }
 
 export default CreateGroup;

@@ -3,14 +3,16 @@ import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import toast from "react-hot-toast";
 import { useSendAttachments } from "../features/chatFeatures/useSendAttachments";
-import { useDispatch } from "react-redux";
-import { setIsFileMenu } from "../redux/reducer/miscSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { setIsCreateGroup, setIsFileMenu } from "../redux/reducer/miscSlice";
 
 function UserMenu({ chatId }) {
   const menuRef = useRef(null);
   const [menuLoaded, setMenuLoaded] = useState(false);
   const dispatch = useDispatch();
   const { isSending, mutateSend } = useSendAttachments();
+
+  const { isCreateGroup } = useSelector((state) => state.misc);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -26,9 +28,13 @@ function UserMenu({ chatId }) {
     }
   }, [menuLoaded]);
 
+  const handleNewGroup = () => {
+    dispatch(setIsCreateGroup(!isCreateGroup));
+  };
+
   return (
     <StyledMenu ref={menuRef}>
-      <StyledItem>New group</StyledItem>
+      <StyledItem onClick={handleNewGroup}>New group</StyledItem>
       <StyledItem>Dark mode</StyledItem>
       <StyledItem>Logout</StyledItem>
     </StyledMenu>

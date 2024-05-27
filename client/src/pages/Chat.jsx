@@ -21,14 +21,16 @@ import Modal from "../ui/Modal";
 import NotificationModal from "../ui/ModalNotification";
 import Notification from "../ui/Notification";
 import SearchWindow from "../ui/SearchWindow";
+import CreateGroup from "../comp/CreateGroup";
 
 function Chat() {
   const { user } = useSelector((state) => state.auth);
-  const { isSearch, isNotification } = useSelector((state) => state.misc);
   const navigate = useNavigate();
   const { socket } = useSocket();
   const dispatch = useDispatch();
 
+  const { isSearch, isNotification } = useSelector((state) => state.misc);
+  const { isCreateGroup } = useSelector((state) => state.misc);
   const { currentChatId } = useSelector((state) => state.chat);
 
   const newMessageHandler = useCallback(
@@ -83,12 +85,15 @@ function Chat() {
   }, [user, navigate]);
 
   return (
-    <div className="w-full h-[100vh] bg-red-200 flex items-center justify-center bg-gradient-to-r from-rose-50 to-teal-50">
+    <div className="w-full h-[100vh] bg-red-200 flex items-center justify-center bg-gradient-to-r from-rose-50 to-teal-50 relative">
       {isSearch && (
         <Modal>
           <SearchWindow />
         </Modal>
       )}
+
+      {isCreateGroup && <CreateGroup />}
+
       {isNotification && (
         <NotificationModal>
           <Notification />

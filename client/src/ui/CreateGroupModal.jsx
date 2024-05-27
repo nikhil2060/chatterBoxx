@@ -2,30 +2,30 @@ import { createPortal } from "react-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useRef, useEffect, useCallback } from "react";
 import styled from "styled-components";
-import { setIsSearch } from "../redux/reducer/miscSlice";
+import { setIsCreateGroup, setIsSearch } from "../redux/reducer/miscSlice";
 import { XCircle } from "@phosphor-icons/react";
 
-function Modal({ children }) {
+function CreateGroupModal({ children }) {
   const dispatch = useDispatch();
   const modalRef = useRef(null);
 
   const handleClose = () => {
-    dispatch(setIsSearch(false));
+    dispatch(setIsCreateGroup(false));
   };
 
-  const { isSearch } = useSelector((state) => state.misc);
+  const { isCreateGroup } = useSelector((state) => state.misc);
 
   const handleClickOutside = useCallback(
     (event) => {
       if (modalRef.current && !modalRef.current.contains(event.target)) {
-        dispatch(setIsSearch(false));
+        dispatch(setIsCreateGroup(false));
       }
     },
     [dispatch]
   );
 
   useEffect(() => {
-    if (isSearch) {
+    if (isCreateGroup) {
       document.addEventListener("mousedown", handleClickOutside);
     } else {
       document.removeEventListener("mousedown", handleClickOutside);
@@ -34,7 +34,7 @@ function Modal({ children }) {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isSearch, handleClickOutside]);
+  }, [handleClickOutside, isCreateGroup]);
 
   return (
     <Overlay>
@@ -48,10 +48,10 @@ function Modal({ children }) {
   );
 }
 
-export default Modal;
+export default CreateGroupModal;
 
 const StyledModal = styled.div`
-  position: absolute;
+  position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -59,7 +59,7 @@ const StyledModal = styled.div`
   border-radius: var(--border-radius-lg);
   box-shadow: var(--shadow-lg);
   padding: 3.2rem 4rem;
-  transition: all 0.5s;
+  /* transition: all 0.5s; */
 `;
 
 const Overlay = styled.div`
@@ -71,7 +71,7 @@ const Overlay = styled.div`
   background-color: var(--backdrop-color);
   backdrop-filter: blur(6px);
   z-index: 1000;
-  transition: all 0.5s;
+  /* transition: all 0.5s; */
 `;
 
 const Button = styled.button`
