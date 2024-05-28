@@ -5,6 +5,9 @@ import toast from "react-hot-toast";
 import { useSendAttachments } from "../features/chatFeatures/useSendAttachments";
 import { useDispatch, useSelector } from "react-redux";
 import { setIsCreateGroup, setIsFileMenu } from "../redux/reducer/miscSlice";
+import axios from "axios";
+import { logOutRoute } from "../utils/AuthRoutes";
+import { userNotExists } from "../redux/reducer/authSlice";
 
 function UserMenu({ chatId }) {
   const menuRef = useRef(null);
@@ -13,6 +16,24 @@ function UserMenu({ chatId }) {
   const { isSending, mutateSend } = useSendAttachments();
 
   const { isCreateGroup } = useSelector((state) => state.misc);
+
+  const handleLogout = async () => {
+    try {
+      await axios
+        .get(logOutRoute, {
+          withCredentials: true,
+        })
+        .then(({ data }) => {
+          if (data.status) {
+            toast.success("logged out successfully");
+            dispatch(userNotExists());
+          }
+        })
+        .catch((err) => console.error("Something went wrong"));
+    } catch (error) {
+      toast.error(error);
+    }
+  };
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -36,7 +57,7 @@ function UserMenu({ chatId }) {
     <StyledMenu ref={menuRef}>
       <StyledItem onClick={handleNewGroup}>New group</StyledItem>
       <StyledItem>Dark mode</StyledItem>
-      <StyledItem>Logout</StyledItem>
+      <StyledItem onClick={handleLogout}>Logout</StyledItem>
     </StyledMenu>
   );
 }

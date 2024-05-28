@@ -41,14 +41,14 @@ function ChatHeader() {
           {currentContact?.name}
         </div>
       </div>
-      <div>
+      {/* <div>
         <button
           className=" rounded-full bg-red-400 px-2 py-1 text-sm text-zinc-100 shadow-md"
           onClick={handleLogout}
         >
           Logout
         </button>
-      </div>
+      </div> */}
     </div>
   );
 }

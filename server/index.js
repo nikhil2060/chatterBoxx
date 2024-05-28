@@ -118,7 +118,7 @@ io.on("connection", (socket) => {
       message: messageForRealtime,
     });
 
-    io.to(userSocketsActive).emit(NEW_MESSAGE_ALERT, {
+    socket.broadcast.to(userSocketsActive).emit(NEW_MESSAGE_ALERT, {
       chatId,
     });
 

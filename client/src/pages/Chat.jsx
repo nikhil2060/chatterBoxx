@@ -35,7 +35,7 @@ function Chat() {
 
   const newMessageHandler = useCallback(
     (data) => {
-      if (user?._id != data?.chatId) return;
+      if (user?._id == data?.chatId) return;
       toast("🔔 New message ", {
         duration: 2000,
         position: "top-right",

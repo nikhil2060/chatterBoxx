@@ -6,6 +6,7 @@ import { Check, Plus } from "@phosphor-icons/react";
 import { useDispatch } from "react-redux";
 import { setIsCreateGroup } from "../redux/reducer/miscSlice";
 import { useCreateGroup } from "../features/GroupFeatures/useCreateGroup";
+import toast from "react-hot-toast";
 
 function CreateGroup({ chatId }) {
   const [groupName, setGroupName] = useState("");
@@ -19,7 +20,15 @@ function CreateGroup({ chatId }) {
   if (isLoading) return <h1>Loading...</h1>;
 
   const handleCreate = () => {
-    if (groupName == "" || selectedMembers.length == 0) return;
+    if (groupName == "") {
+      toast.error("Enter group name");
+      return;
+    }
+
+    if (selectedMembers.length < 2) {
+      toast.error("Choose at least 2 members");
+      return;
+    }
     mutateCreate({ groupName, selectedMembers });
     setGroupName("");
     setSelectedMembers([]);

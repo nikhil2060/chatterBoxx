@@ -16,9 +16,13 @@ export function useGetMyGroups() {
 }
 
 export function useCreateGroup() {
+  const queryClient = useQueryClient();
   const { isLoading: isCreating, mutate: mutateCreate } = useMutation({
     mutationFn: ({ groupName, selectedMembers }) => {
       return createGroup(groupName, selectedMembers);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries("myGroups");
     },
     onError: (err) => toast.error("Something went wrong"),
   });
