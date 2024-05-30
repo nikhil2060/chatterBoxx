@@ -18,6 +18,8 @@ import MessageReceiverPhoto from "../comp/MessageReceiverPhoto";
 import MessageSenderItem from "../comp/MessageSenderItem";
 import MessageSenderPhoto from "../comp/MessageSenderPhoto";
 import { setIamTyping, setIsFileMenu } from "../redux/reducer/miscSlice";
+import ChatDetails from "./ChatDetails";
+import GroupDetails from "./GroupDetails";
 
 function ChatContainer() {
   const [messages, setMessages] = useState([]);
@@ -27,7 +29,12 @@ function ChatContainer() {
   const bottomRef = useRef(null);
 
   const { user } = useSelector((state) => state.auth);
-  const { currentChatId } = useSelector((state) => state.chat);
+  const { currentChatId, myChats } = useSelector((state) => state.chat);
+
+  const currentContact = myChats.find(
+    (contact) => contact?._id === currentChatId
+  );
+
   const { isFileMenu, userTyping } = useSelector((state) => state.misc);
 
   useEffect(() => {
@@ -71,6 +78,7 @@ function ChatContainer() {
   const { socket } = useSocket();
 
   const newMessageHandler = useCallback((data) => {
+    // if (currentChatId?._id != data?.chatId) return;
     setMessages((prev) => [...prev, data]);
   }, []);
 
@@ -88,6 +96,8 @@ function ChatContainer() {
   return (
     <div className="w-2/3 h-full bg-zinc-200 rounded-xl shadow-[0_3px_10px_rgb(0,0,0,0.2)] overflow-hidden flex flex-col relative">
       <ChatHeader />
+
+      {/* <ChatDetails /> */}
 
       <div className="chat-section w-full shadow-[0_3px_10px_rgb(0,0,0,0.2)] bg-[url('../src/assets/background.jpeg')] bg-contain flex-grow p-4 gap-5 flex flex-col overflow-auto overflow-x-hidden">
         {isFileMenu && <FileMenu chatId={currentChatId} />}

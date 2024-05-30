@@ -23,8 +23,10 @@ export async function getMyChats() {
   }
 }
 
-export async function getChatDetails(chatId, populate = false) {
+export async function getChatDetails(chatId, populate = true) {
   if (!chatId) return null;
+
+  console.log(`${getChatDetailsRoute}/${chatId}?populate=${populate}`);
 
   try {
     const res = await fetch(
