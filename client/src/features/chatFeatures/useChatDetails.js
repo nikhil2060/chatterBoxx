@@ -2,13 +2,12 @@ import { useQuery } from "@tanstack/react-query";
 import { getChatDetails, getChatMessages } from "../../services/apiChat";
 
 export function useGetChatDetails(currentChatId, populate = "false") {
-  console.log(currentChatId, populate);
-  const { isLoading, data, error, refetch } = useQuery({
-    queryKey: ["chatDetails"],
+  // console.log(currentChatId, populate);
+  return useQuery({
+    queryKey: ["chatDetails", currentChatId, populate],
     queryFn: () => getChatDetails(currentChatId, populate),
+    enabled: !!currentChatId,
   });
-
-  return { isLoading, error, data, refetch };
 }
 
 export function useGetChatMessages(currentChatId, page = 1) {

@@ -23,10 +23,10 @@ export async function getMyChats() {
   }
 }
 
-export async function getChatDetails(chatId, populate = true) {
+export async function getChatDetails(chatId, populate) {
   if (!chatId) return null;
 
-  console.log(`${getChatDetailsRoute}/${chatId}?populate=${populate}`);
+  // console.log(`${getChatDetailsRoute}/${chatId}?populate=${populate}`);
 
   try {
     const res = await fetch(
@@ -40,6 +40,8 @@ export async function getChatDetails(chatId, populate = true) {
     if (!res.ok) throw Error();
 
     const { chat } = await res.json();
+
+    // console.log(chat);
 
     return chat;
   } catch (err) {

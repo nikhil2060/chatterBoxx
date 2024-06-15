@@ -1,61 +1,50 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
 import { useGetChatDetails } from "../features/chatFeatures/useChatDetails";
 
 function GroupDetails({ currentChatId }) {
-  const { isLoading, error, data, refetch } = useGetChatDetails(
-    currentChatId,
-    "true"
-  );
-
-  console.log(data);
+  const { isLoading, error, data } = useGetChatDetails(currentChatId, "true");
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
-  // console.log(data);
+
+  console.log(data);
 
   return (
     <ChatDetailsContainer>
-      <Header>
-        <h2>Group Name</h2>
-      </Header>
       <ImageContainer>
         <img
-          src="https://cdn.pixabay.com/photo/2021/07/02/04/48/user-6380868_640.png"
+          src={
+            data?.groupAvatar ||
+            "https://cdn.pixabay.com/photo/2021/07/02/04/48/user-6380868_640.png"
+          }
           alt="Profile"
         />
       </ImageContainer>
-      <UserName>Name</UserName>
-      <PhoneNumber>this is bio</PhoneNumber>
+      <UserName>{data?.name || "Name"}</UserName>
+      {/* <PhoneNumber>{data?.bio || "This is bio"}</PhoneNumber> */}
       <ButtonsContainer>
         <Button>Add</Button>
         <Button>Remove</Button>
       </ButtonsContainer>
+      <h4>members : </h4>
       <MembersList>
-        {/* {myFriends?.map((friend, i) => (
-          <MembersListItem
-            friend={friend}
-            setSelectedMembers={setSelectedMembers}
-            selectedMembers={selectedMembers}
-            key={i}
-          />
-        ))} */}
-        <MembersListItem />
+        {data?.members?.map((member, i) => (
+          <MembersListItem key={i} friend={member} />
+        ))}
       </MembersList>
     </ChatDetailsContainer>
   );
 }
 
-const MembersListItem = ({ friend }) => {
-  return (
-    <MemberItem>
-      <MemberImage>
-        <img src={friend?.avatar} alt="" className="" />
-      </MemberImage>
-      <MemberName>{friend?.name}</MemberName>
-    </MemberItem>
-  );
-};
+const MembersListItem = ({ friend }) => (
+  <MemberItem>
+    <MemberImage>
+      <img src={friend?.avatar} alt="" />
+    </MemberImage>
+    <MemberName>{friend?.name}</MemberName>
+  </MemberItem>
+);
 
 const MemberImage = styled.div`
   width: 30px;
@@ -67,14 +56,14 @@ const MemberImage = styled.div`
 const MemberItem = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 5px 5px 5px 10px;
+  padding: 5px 10px;
   border: 1px solid #eee;
   border-radius: 50px;
 `;
 
 const MemberName = styled.span`
   font-size: 14px;
+  margin-left: 10px;
 `;
 
 const ChatDetailsContainer = styled.div`
@@ -94,7 +83,7 @@ const ChatDetailsContainer = styled.div`
 `;
 
 const MembersList = styled.div`
-  width: 100%;
+  max-height: 200px; /* Adjust height to display 3 members */
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -130,16 +119,18 @@ const PhoneNumber = styled.div`
 
 const ButtonsContainer = styled.div`
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
+  gap: 10px;
+  /* justify-content: space-around; */
   margin: 10px 0;
 `;
 
 const Button = styled.button`
-  background-color: #444;
+  background-color: #b3d3f1;
   color: white;
   border: none;
-  padding: 10px 15px;
-  border-radius: 5px;
+  padding: 5px 15px;
+  border-radius: 59px;
   cursor: pointer;
 
   &:hover {

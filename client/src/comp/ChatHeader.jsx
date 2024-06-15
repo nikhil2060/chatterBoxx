@@ -1,11 +1,7 @@
-import axios from "axios";
-import { useDispatch, useSelector } from "react-redux";
-import { logOutRoute } from "../utils/AuthRoutes";
-import toast from "react-hot-toast";
-import { userNotExists } from "../redux/reducer/authSlice";
-import GroupDetails from "./GroupDetails";
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import ChatDetails from "./ChatDetails";
+import GroupDetails from "./GroupDetails";
 
 function ChatHeader() {
   const { currentChatId, myChats } = useSelector((state) => state.chat);
@@ -36,14 +32,12 @@ function ChatHeader() {
         </div>
       </div>
 
-      {isDetail ? (
-        isGroupChat ? (
+      {isDetail &&
+        (isGroupChat ? (
           <GroupDetails currentChatId={currentChatId} />
         ) : (
           <ChatDetails currentChatId={currentChatId} />
-        )
-      ) : null}
-      {/* <GroupDetails /> */}
+        ))}
     </div>
   );
 }
