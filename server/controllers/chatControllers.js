@@ -121,7 +121,6 @@ module.exports.addMembers = async (req, res, next) => {
   try {
     const { chatId, members } = req.body;
 
-    console.log(chatId, members);
     if (members.length < 1)
       return res.status(400).json({
         status: false,
@@ -129,8 +128,6 @@ module.exports.addMembers = async (req, res, next) => {
       });
 
     const chat = await Chat.findById(chatId);
-
-    console.log(chat);
 
     if (!chat)
       return res.status(400).json({
