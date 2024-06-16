@@ -1,14 +1,23 @@
 import React from "react";
 import styled from "styled-components";
 import { useGetChatDetails } from "../features/chatFeatures/useChatDetails";
+import { XCircle } from "@phosphor-icons/react";
+import { useRemoveGroupMember } from "../features/GroupFeatures/useMutateGroup ";
 
 function GroupDetails({ currentChatId }) {
   const { isLoading, error, data } = useGetChatDetails(currentChatId, "true");
+
+  const { isRemoving, mutateRemove } = useRemoveGroupMember();
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
 
   console.log(data);
+
+  const handleRemove = (memberId) => {
+    console.log("Removing member with ID:", memberId);
+    mutateRemove({ currentChatId, memberId });
+  };
 
   return (
     <ChatDetailsContainer>
@@ -24,27 +33,48 @@ function GroupDetails({ currentChatId }) {
       <UserName>{data?.name || "Name"}</UserName>
       {/* <PhoneNumber>{data?.bio || "This is bio"}</PhoneNumber> */}
       <ButtonsContainer>
-        <Button>Add</Button>
-        <Button>Remove</Button>
+        <Button>Add Member</Button>
+        <Button>Delete Group</Button>
       </ButtonsContainer>
-      <h4>members : </h4>
+      <h4>Members:</h4>
       <MembersList>
         {data?.members?.map((member, i) => (
-          <MembersListItem key={i} friend={member} />
+          <MembersListItem key={i} friend={member} onRemove={handleRemove} />
         ))}
       </MembersList>
     </ChatDetailsContainer>
   );
 }
 
-const MembersListItem = ({ friend }) => (
+const MembersListItem = ({ friend, onRemove }) => (
   <MemberItem>
     <MemberImage>
       <img src={friend?.avatar} alt="" />
     </MemberImage>
     <MemberName>{friend?.name}</MemberName>
+    <RemoveButton onClick={() => onRemove(friend?._id)}>
+      <XCircle size={20} color="red" />
+    </RemoveButton>
   </MemberItem>
 );
+
+const RemoveButton = styled.button`
+  background: none;
+  border: none;
+  padding: 0.2rem;
+  border-radius: var(--border-radius-sm);
+  transform: translateX(0.8rem);
+  transition: all 0.2s;
+  margin-right: 10px;
+
+  &:hover {
+    background-color: var(--color-grey-100);
+  }
+
+  & svg {
+    color: var(--color-grey-500);
+  }
+`;
 
 const MemberImage = styled.div`
   width: 30px;
@@ -59,6 +89,7 @@ const MemberItem = styled.div`
   padding: 5px 10px;
   border: 1px solid #eee;
   border-radius: 50px;
+  justify-content: space-between;
 `;
 
 const MemberName = styled.span`
@@ -127,6 +158,7 @@ const ButtonsContainer = styled.div`
 
 const Button = styled.button`
   background-color: #b3d3f1;
+  font-size: 14px;
   color: white;
   border: none;
   padding: 5px 15px;

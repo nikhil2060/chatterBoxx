@@ -15,6 +15,8 @@ const { getMyProfile } = require("../controllers/userControllers");
 const { isAuthenticated } = require("../middlewares/auth");
 const { attachmentsMulter } = require("../middlewares/multer");
 
+// base = ${host}/api/chat/
+
 const router = require("express").Router();
 
 router.use(isAuthenticated);

@@ -9,7 +9,12 @@ import {
 } from "../features/chatFeatures/useChatDetails";
 import useSocketEvents from "../hooks/useSocketEvents";
 
-import { NEW_MESSAGE, START_TYPING, STOP_TYPING } from "../contants/event";
+import {
+  NEW_MESSAGE,
+  REFETCH_CHATS,
+  START_TYPING,
+  STOP_TYPING,
+} from "../contants/event";
 
 import ChatHeader from "../comp/ChatHeader";
 import FileMenu from "../comp/FileMenu";
@@ -82,7 +87,14 @@ function ChatContainer() {
     setMessages((prev) => [...prev, data]);
   }, []);
 
-  const eventHandler = { [NEW_MESSAGE]: newMessageHandler };
+  const refetchListner = useCallback(() => {
+    refetch();
+  }, [refetch]);
+
+  const eventHandler = {
+    [NEW_MESSAGE]: newMessageHandler,
+    [REFETCH_CHATS]: refetchListner,
+  };
 
   useSocketEvents(socket, eventHandler);
 

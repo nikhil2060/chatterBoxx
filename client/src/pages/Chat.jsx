@@ -8,6 +8,7 @@ import useSocketEvents from "../hooks/useSocketEvents";
 import {
   NEW_MESSAGE_ALERT,
   NEW_REQUEST,
+  REFETCH_CHATS,
   START_TYPING,
   STOP_TYPING,
 } from "../contants/event";

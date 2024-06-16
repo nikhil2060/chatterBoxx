@@ -1,5 +1,9 @@
 import toast from "react-hot-toast";
-import { createGroupRoute, getMyGroupsRoute } from "../utils/GroupRoutes";
+import {
+  createGroupRoute,
+  getMyGroupsRoute,
+  removeGroupMemberRoute,
+} from "../utils/GroupRoutes";
 
 export async function getMyGroups() {
   try {
@@ -48,5 +52,34 @@ export async function createGroup(name, members) {
     return data;
   } catch (err) {
     throw Error("Failed in sending request", err);
+  }
+}
+
+export async function removeGroupMember(chatId, userId) {
+  try {
+    const res = await fetch(removeGroupMemberRoute, {
+      body: JSON.stringify({ chatId, userId }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "PUT",
+      credentials: "include",
+    });
+
+    if (!res.ok) throw Error();
+
+    const data = await res.json();
+
+    console.log(data);
+
+    if (data.status === true) {
+      toast.success(data.msg);
+    } else {
+      toast.error(data.msg);
+    }
+
+    return data;
+  } catch (err) {
+    throw Error("Failed in removing member from group", err);
   }
 }
