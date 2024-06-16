@@ -3,11 +3,14 @@ import styled from "styled-components";
 import { useGetChatDetails } from "../features/chatFeatures/useChatDetails";
 import { XCircle } from "@phosphor-icons/react";
 import { useRemoveGroupMember } from "../features/GroupFeatures/useMutateGroup ";
+import { setIsAddGroupMember } from "../redux/reducer/miscSlice";
+import { useDispatch } from "react-redux";
 
 function GroupDetails({ currentChatId }) {
   const { isLoading, error, data } = useGetChatDetails(currentChatId, "true");
 
   const { isRemoving, mutateRemove } = useRemoveGroupMember();
+  const dispatch = useDispatch();
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
@@ -17,6 +20,11 @@ function GroupDetails({ currentChatId }) {
   const handleRemove = (memberId) => {
     console.log("Removing member with ID:", memberId);
     mutateRemove({ currentChatId, memberId });
+  };
+
+  const handleAddMember = () => {
+    console.log("YOO");
+    dispatch(setIsAddGroupMember(true));
   };
 
   return (
@@ -33,7 +41,7 @@ function GroupDetails({ currentChatId }) {
       <UserName>{data?.name || "Name"}</UserName>
       {/* <PhoneNumber>{data?.bio || "This is bio"}</PhoneNumber> */}
       <ButtonsContainer>
-        <Button>Add Member</Button>
+        <Button onClick={handleAddMember}>Add Member</Button>
         <Button>Delete Group</Button>
       </ButtonsContainer>
       <h4>Members:</h4>

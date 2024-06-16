@@ -23,6 +23,7 @@ import NotificationModal from "../ui/ModalNotification";
 import Notification from "../ui/Notification";
 import SearchWindow from "../ui/SearchWindow";
 import CreateGroup from "../comp/CreateGroup";
+import AddMember from "../comp/Group/AddMember";
 
 function Chat() {
   const { user } = useSelector((state) => state.auth);
@@ -31,8 +32,12 @@ function Chat() {
   const dispatch = useDispatch();
 
   const { isSearch, isNotification } = useSelector((state) => state.misc);
-  const { isCreateGroup } = useSelector((state) => state.misc);
+  const { isCreateGroup, isAddGroupMember } = useSelector(
+    (state) => state.misc
+  );
   const { currentChatId } = useSelector((state) => state.chat);
+
+  console.log(isAddGroupMember);
 
   const newMessageHandler = useCallback(
     (data) => {
@@ -94,6 +99,8 @@ function Chat() {
       )}
 
       {isCreateGroup && <CreateGroup chatId={user?._id} />}
+
+      {isAddGroupMember && <AddMember />}
 
       {isNotification && (
         <NotificationModal>

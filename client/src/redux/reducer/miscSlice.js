@@ -11,6 +11,7 @@ const initialState = {
   uploadingLoader: false,
   iamTyping: false,
   isCreateGroup: false,
+  isAddGroupMember: false,
   userTyping: false,
   selectedDeleteChat: {
     chatId: "",
@@ -40,6 +41,9 @@ const miscSlice = createSlice({
     },
     setIsCreateGroup: (state, action) => {
       state.isCreateGroup = action.payload;
+    },
+    setIsAddGroupMember: (state, action) => {
+      state.isAddGroupMember = action.payload;
     },
     setIsFileMenu: (state, action) => {
       state.isFileMenu = action.payload;
@@ -76,4 +80,5 @@ export const {
   setIamTyping,
   setUserTyping,
   setIsCreateGroup,
+  setIsAddGroupMember,
 } = miscSlice.actions;
