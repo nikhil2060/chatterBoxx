@@ -206,6 +206,8 @@ module.exports.removeMember = async (req, res, next) => {
         msg: "Group must have at least 3 members",
       });
 
+    const allChatMembers = chat.members.map((i) => i.toString());
+
     chat.members = chat.members.filter(
       (member) => member.toString() !== userId.toString()
     );
@@ -219,11 +221,11 @@ module.exports.removeMember = async (req, res, next) => {
       `${userThatWillBeRemoved} has been removed from the group`
     );
 
-    emitEvent(req, REFETCH_CHATS, chat.members);
+    emitEvent(req, REFETCH_CHATS, allChatMembers);
 
     return res.status(200).json({
       status: true,
-      msg: "Member Remove Succesfully",
+      msg: "Member Removed Succesfully",
     });
   } catch (error) {
     next(error);
@@ -442,9 +444,9 @@ module.exports.deleteChat = async (req, res, next) => {
       });
 
     if (chat.groupChat && chat.creater.toString() !== req.user.toString())
-      return res.status(403).json({
+      return res.json({
         status: false,
-        msg: "You are not allowed to delete the group",
+        msg: "You are not the creater of this group",
       });
 
     const members = chat.members;
@@ -494,6 +496,21 @@ module.exports.getMessages = async (req, res, next) => {
 
     const resultPerPage = 20;
     const skip = (page - 1) * resultPerPage;
+
+    const chat = await Chat.findById(chatId);
+
+    if (!chat)
+      return res.status(404).json({
+        status: false,
+        msg: "Chat not found",
+      });
+
+    if (!chat.members.includes(req.user.toString())) {
+      return res.status(404).json({
+        status: false,
+        msg: "You are not allowed to access this chat",
+      });
+    }
 
     const [messages, totalMessagesCount] = await Promise.all([
       Message.find({ chat: chatId })

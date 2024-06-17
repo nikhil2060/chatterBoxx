@@ -37,8 +37,6 @@ function Chat() {
   );
   const { currentChatId } = useSelector((state) => state.chat);
 
-  console.log(isAddGroupMember);
-
   const newMessageHandler = useCallback(
     (data) => {
       if (user?._id == data?.chatId) return;

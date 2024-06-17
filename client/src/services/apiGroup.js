@@ -5,6 +5,7 @@ import {
   getMyGroupsRoute,
   removeGroupMemberRoute,
 } from "../utils/GroupRoutes";
+import { getChatDetailsRoute } from "../utils/ChatRoutes";
 
 export async function getMyGroups() {
   try {
@@ -71,8 +72,6 @@ export async function removeGroupMember(chatId, userId) {
 
     const data = await res.json();
 
-    console.log(data);
-
     if (data.status === true) {
       toast.success(data.msg);
     } else {
@@ -100,8 +99,6 @@ export async function AddGroupMembers(chatId, members) {
 
     const data = await res.json();
 
-    console.log(data);
-
     if (data.status === true) {
       toast.success(data.msg);
     } else {
@@ -111,5 +108,28 @@ export async function AddGroupMembers(chatId, members) {
     return data;
   } catch (err) {
     throw Error("Failed in Adding members in group", err);
+  }
+}
+
+export async function deleteGroupChat(chatId) {
+  try {
+    const res = await fetch(`${getChatDetailsRoute}/${chatId}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+
+    if (!res.ok) throw Error();
+
+    const data = await res.json();
+
+    if (data.status === true) {
+      toast.success(data.msg);
+    } else {
+      toast.error(data.msg);
+    }
+
+    return data;
+  } catch (err) {
+    throw Error("Failed in deleting the group", err);
   }
 }

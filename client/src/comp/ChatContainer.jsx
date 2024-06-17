@@ -2,7 +2,7 @@ import { PaperPlaneRight, Paperclip } from "@phosphor-icons/react";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useSocket } from "../contexts/socketContext";
-
+import { useNavigate } from "react-router-dom";
 import {
   useGetChatDetails,
   useGetChatMessages,
@@ -32,7 +32,7 @@ function ChatContainer() {
 
   const containerRef = useRef(null);
   const bottomRef = useRef(null);
-
+  const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
   const { currentChatId, myChats } = useSelector((state) => state.chat);
 
@@ -72,6 +72,10 @@ function ChatContainer() {
     setPage(1);
   }, [currentChatId]);
 
+  // useEffect(() => {
+  //   if (chatData.data?.chat) return navigate("/");
+  // }, [chatData.data?.chat, navigate]);
+
   // const { data: oldMessages, setData: setOldMessages } = useInfiniteScrollTop(
   //   containerRef,
   //   oldMessageData?.totalPages,
@@ -89,7 +93,8 @@ function ChatContainer() {
 
   const refetchListner = useCallback(() => {
     refetch();
-  }, [refetch]);
+    navigate("/");
+  }, [refetch, navigate]);
 
   const eventHandler = {
     [NEW_MESSAGE]: newMessageHandler,

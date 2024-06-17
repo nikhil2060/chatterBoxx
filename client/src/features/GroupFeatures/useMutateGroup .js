@@ -1,6 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getMyFriends } from "../../services/apiUser";
-import { AddGroupMembers, removeGroupMember } from "../../services/apiGroup";
+import {
+  AddGroupMembers,
+  deleteGroupChat,
+  removeGroupMember,
+} from "../../services/apiGroup";
 import toast from "react-hot-toast";
 
 export function useRemoveGroupMember() {
@@ -33,4 +37,20 @@ export function useAddGroupMembers() {
   });
 
   return { isAdding, mutateAdd };
+}
+
+export function useDeleteGroup() {
+  const queryClient = useQueryClient();
+  const { isLoading: isDeleting, mutate: mutateDelete } = useMutation({
+    mutationFn: ({ currentChatId }) => {
+      return deleteGroupChat(currentChatId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries("myGroups");
+      queryClient.invalidateQueries("myChats");
+    },
+    onError: (err) => toast.error("Something went wrong"),
+  });
+
+  return { isDeleting, mutateDelete };
 }

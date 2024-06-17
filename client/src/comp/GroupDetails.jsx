@@ -2,29 +2,39 @@ import React from "react";
 import styled from "styled-components";
 import { useGetChatDetails } from "../features/chatFeatures/useChatDetails";
 import { XCircle } from "@phosphor-icons/react";
-import { useRemoveGroupMember } from "../features/GroupFeatures/useMutateGroup ";
+import {
+  useDeleteGroup,
+  useRemoveGroupMember,
+} from "../features/GroupFeatures/useMutateGroup ";
 import { setIsAddGroupMember } from "../redux/reducer/miscSlice";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 function GroupDetails({ currentChatId }) {
+  const navigate = useNavigate();
+
   const { isLoading, error, data } = useGetChatDetails(currentChatId, "true");
 
   const { isRemoving, mutateRemove } = useRemoveGroupMember();
+
+  const { isDeleting, mutateDelete } = useDeleteGroup();
+
   const dispatch = useDispatch();
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
 
-  console.log(data);
-
   const handleRemove = (memberId) => {
-    console.log("Removing member with ID:", memberId);
     mutateRemove({ currentChatId, memberId });
   };
 
   const handleAddMember = () => {
-    console.log("YOO");
     dispatch(setIsAddGroupMember(true));
+  };
+
+  const handleDeleteGroup = () => {
+    mutateDelete({ currentChatId });
+    navigate("/");
   };
 
   return (
@@ -42,7 +52,7 @@ function GroupDetails({ currentChatId }) {
       {/* <PhoneNumber>{data?.bio || "This is bio"}</PhoneNumber> */}
       <ButtonsContainer>
         <Button onClick={handleAddMember}>Add Member</Button>
-        <Button>Delete Group</Button>
+        <Button onClick={handleDeleteGroup}>Delete Group</Button>
       </ButtonsContainer>
       <h4>Members:</h4>
       <MembersList>
