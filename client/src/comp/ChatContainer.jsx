@@ -73,8 +73,8 @@ function ChatContainer() {
   }, [currentChatId]);
 
   // useEffect(() => {
-  //   if (chatData.data?.chat) return navigate("/");
-  // }, [chatData.data?.chat, navigate]);
+  //   if (!chatData) return navigate("/");
+  // }, [chatData, navigate]);
 
   // const { data: oldMessages, setData: setOldMessages } = useInfiniteScrollTop(
   //   containerRef,
@@ -113,8 +113,6 @@ function ChatContainer() {
   return (
     <div className="w-2/3 h-full bg-zinc-200 rounded-xl shadow-[0_3px_10px_rgb(0,0,0,0.2)] overflow-hidden flex flex-col relative">
       <ChatHeader />
-
-      {/* <ChatDetails /> */}
 
       <div className="chat-section w-full shadow-[0_3px_10px_rgb(0,0,0,0.2)] bg-[url('../src/assets/background.jpeg')] bg-contain flex-grow p-4 gap-5 flex flex-col overflow-auto overflow-x-hidden">
         {isFileMenu && <FileMenu chatId={currentChatId} />}
