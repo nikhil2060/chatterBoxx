@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useGetMyChats } from "../features/chatFeatures/useGetMyChats";
 import { setCurrentChat, setMyChats } from "../redux/reducer/chatSlice";
 import { useGetMyGroups } from "../features/GroupFeatures/useCreateGroup";
+import { motion } from "framer-motion";
 
 function GroupsList() {
   const dispatch = useDispatch();
@@ -45,17 +46,22 @@ function GroupListItem({ contact, isSelected }) {
   const dispatch = useDispatch();
 
   return (
-    <div
-      onClick={() => dispatch(setCurrentChat(contact._id))}
-      className={`w-full h-[4.5rem] flex items-center p-5 gap-5 border-b-[1px] border-zinc-400 transition duration-400 ${
-        isSelected ? "bg-[#B3D4F2] shadow-md z-50 border-none " : ""
-      }`}
+    <motion.div
+      initial={{ opacity: 0, y: "-100%" }}
+      whileInView={{ opacity: 1, y: 0 }}
     >
-      <div className="image-box w-10 h-10 bg-zinc-600 rounded-full overflow-hidden bg-cover ">
-        <img src={contact.avatar[0]} alt="profilePic" />
+      <div
+        onClick={() => dispatch(setCurrentChat(contact._id))}
+        className={`w-full h-[4.5rem] flex items-center p-5 gap-5 border-b-[1px] border-zinc-400 transition duration-400 ${
+          isSelected ? "bg-[#B3D4F2] shadow-md z-50 border-none " : ""
+        }`}
+      >
+        <div className="image-box w-10 h-10 bg-zinc-600 rounded-full overflow-hidden bg-cover ">
+          <img src={contact.avatar[0]} alt="profilePic" />
+        </div>
+        <span>{contact.name}</span>
       </div>
-      <span>{contact.name}</span>
-    </div>
+    </motion.div>
   );
 }
 

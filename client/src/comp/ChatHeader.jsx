@@ -25,10 +25,13 @@ function ChatHeader() {
           className="w-12 h-12 bg-zinc-600 rounded-full overflow-hidden bg-contain border-[#00223f] border-[1.5px]"
           onClick={() => setIsDetails(!isDetail)}
         >
-          <img src={currentContact?.avatar} alt="profilePic1" />
+          <img
+            src={!currentChatId ? `../usericon.jpeg` : currentContact?.avatar}
+            alt="profilePic1"
+          />
         </div>
         <div className="flex items-center gap-3 text-zinc-500">
-          {currentContact?.name}
+          {!currentChatId ? `Please select a chat` : currentContact?.name}
         </div>
       </div>
 

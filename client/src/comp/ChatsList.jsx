@@ -43,17 +43,33 @@ function ChatListItem({ contact, isSelected }) {
 
   return (
     <motion.div
+<<<<<<< HEAD
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       onClick={() => dispatch(setCurrentChat(contact._id))}
       className={`w-full h-[4.5rem] flex items-center p-5 gap-5 border-b-[1px] border-zinc-400 transition duration-400 ${
         isSelected ? "bg-[#B3D4F2] shadow-md z-50 border-none " : ""
       }`}
+=======
+      initial={{ opacity: 0, y: "-100%" }}
+      whileInView={{ opacity: 1, y: 0 }}
+>>>>>>> 5e4e42002a4902b950476693b9cb32a7489782be
     >
-      <div className="image-box w-10 h-10 bg-zinc-600 rounded-full overflow-hidden bg-cover ">
-        <img src={contact.avatar[0]} alt="profilePic" />
+      <div
+        onClick={() => dispatch(setCurrentChat(contact._id))}
+        className={`w-full h-[4.5rem] flex items-center p-5 gap-5 border-b-[1px] border-zinc-400 transition duration-400 ${
+          isSelected ? "bg-[#B3D4F2] shadow-md z-50 border-none " : ""
+        }`}
+      >
+        <div className="image-box w-10 h-10 bg-zinc-600 rounded-full overflow-hidden bg-cover ">
+          <img src={contact.avatar[0]} alt="profilePic" />
+        </div>
+        <span>{contact.name}</span>
       </div>
+<<<<<<< HEAD
       <span>{contact.name}</span>
+=======
+>>>>>>> 5e4e42002a4902b950476693b9cb32a7489782be
     </motion.div>
   );
 }
