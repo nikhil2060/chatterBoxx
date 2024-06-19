@@ -4,6 +4,7 @@ import { CircularProgress } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useGetMyChats } from "../features/chatFeatures/useGetMyChats";
 import { setCurrentChat, setMyChats } from "../redux/reducer/chatSlice";
+import { motion } from "framer-motion";
 
 function ChatsList() {
   const dispatch = useDispatch();
@@ -41,7 +42,9 @@ function ChatListItem({ contact, isSelected }) {
   const dispatch = useDispatch();
 
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
       onClick={() => dispatch(setCurrentChat(contact._id))}
       className={`w-full h-[4.5rem] flex items-center p-5 gap-5 border-b-[1px] border-zinc-400 transition duration-400 ${
         isSelected ? "bg-[#B3D4F2] shadow-md z-50 border-none " : ""
@@ -51,7 +54,7 @@ function ChatListItem({ contact, isSelected }) {
         <img src={contact.avatar[0]} alt="profilePic" />
       </div>
       <span>{contact.name}</span>
-    </div>
+    </motion.div>
   );
 }
 

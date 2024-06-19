@@ -1,8 +1,8 @@
 import { PaperPlaneRight, Paperclip } from "@phosphor-icons/react";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useSocket } from "../contexts/socketContext";
 import { useNavigate } from "react-router-dom";
+import { useSocket } from "../contexts/socketContext";
 import {
   useGetChatDetails,
   useGetChatMessages,
@@ -23,8 +23,8 @@ import MessageReceiverPhoto from "../comp/MessageReceiverPhoto";
 import MessageSenderItem from "../comp/MessageSenderItem";
 import MessageSenderPhoto from "../comp/MessageSenderPhoto";
 import { setIamTyping, setIsFileMenu } from "../redux/reducer/miscSlice";
-import ChatDetails from "./ChatDetails";
-import GroupDetails from "./GroupDetails";
+
+import { motion } from "framer-motion";
 
 function ChatContainer() {
   const [messages, setMessages] = useState([]);
@@ -111,7 +111,13 @@ function ChatContainer() {
   // console.log(oldMessageData);
 
   return (
-    <div className="w-2/3 h-full bg-zinc-200 rounded-xl shadow-[0_3px_10px_rgb(0,0,0,0.2)] overflow-hidden flex flex-col relative">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.8 }}
+      className="w-2/3 h-full bg-zinc-200 rounded-xl shadow-[0_3px_10px_rgb(0,0,0,0.2)] overflow-hidden flex flex-col relative"
+    >
       <ChatHeader />
 
       {/* <ChatDetails /> */}
@@ -168,7 +174,7 @@ function ChatContainer() {
       </div>
 
       <ChatInput chatId={chatData?._id} members={chatData?.members} />
-    </div>
+    </motion.div>
   );
 }
 

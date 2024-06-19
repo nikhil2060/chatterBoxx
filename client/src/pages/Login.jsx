@@ -6,6 +6,7 @@ import { loginRoute } from "../utils/AuthRoutes";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { userExists, userNotExists } from "../redux/reducer/authSlice";
+import { motion } from "framer-motion";
 
 function Login() {
   const { user, isLoggedIn } = useSelector((state) => state.auth);
@@ -79,7 +80,13 @@ function Login() {
 
   return (
     <div className="w-full h-screen flex items-center justify-center text-zinc-800  bg-contain bg-no-repeat bg-center bg-gradient-to-r from-indigo-50 to-yellow-50">
-      <div className="w-[22rem] h-[21rem] flex flex-col items-center rounded-xl  bg-zinc-50 shadow-[rgba(13,_38,_76,_0.5)_0px_9px_20px] ">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.5 }}
+        className="w-[22rem] h-[21rem] flex flex-col items-center rounded-xl  bg-zinc-50 shadow-[rgba(13,_38,_76,_0.5)_0px_9px_20px] "
+      >
         <h1 className="py-5 mt-[3px] text-xl font-medium text-zinc-800">
           Login
         </h1>
@@ -110,7 +117,7 @@ function Login() {
             Create One.
           </Link>
         </span>
-      </div>
+      </motion.div>
     </div>
   );
 }

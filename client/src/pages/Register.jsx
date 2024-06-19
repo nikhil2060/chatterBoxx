@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import "react-toastify/dist/ReactToastify.css";
 import styled from "styled-components";
 import { registerRoute } from "../utils/AuthRoutes";
+import { motion } from "framer-motion";
 
 function Register() {
   const [isRegistering, setIsRegistering] = useState(false);
@@ -103,7 +104,13 @@ function Register() {
 
   return (
     <div className="w-full h-screen flex items-center justify-center text-zinc-800 bg-contain bg-no-repeat bg-center bg-gradient-to-r from-rose-50 to-teal-50">
-      <div className="w-[22rem] h-[40rem] flex flex-col items-center rounded-xl bg-zinc-50 shadow-[rgba(13,_38,_76,_0.5)_0px_9px_20px] ">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.5 }}
+        className="w-[22rem] h-[40rem] flex flex-col items-center rounded-xl bg-zinc-50 shadow-[rgba(13,_38,_76,_0.5)_0px_9px_20px] "
+      >
         <h1 className="py-5 mt-[3px] text-xl font-medium text-zinc-800">
           Signup
         </h1>
@@ -166,7 +173,7 @@ function Register() {
             Log in.
           </Link>
         </span>
-      </div>
+      </motion.div>
     </div>
   );
 }

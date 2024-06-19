@@ -2,7 +2,7 @@ import React, { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useSocket } from "../contexts/socketContext";
-
+import { motion } from "framer-motion";
 import useSocketEvents from "../hooks/useSocketEvents";
 
 import {
@@ -105,13 +105,18 @@ function Chat() {
           <Notification />
         </NotificationModal>
       )}
-      <div
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.8 }}
         className="chat-container w-5/6 h-5/6 bg-[#B3D4F2] rounded-[2rem]
       flex gap-[1.25rem] p-5 shadow-[0_3px_10px_rgb(0,0,0,0.2)]"
       >
         <ContactsContainer />
         <ChatContainer />
-      </div>
+      </motion.div>
     </div>
   );
 }
