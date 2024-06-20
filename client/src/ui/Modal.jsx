@@ -4,6 +4,7 @@ import { useRef, useEffect, useCallback } from "react";
 import styled from "styled-components";
 import { setIsSearch } from "../redux/reducer/miscSlice";
 import { XCircle } from "@phosphor-icons/react";
+import { motion } from "framer-motion";
 
 function Modal({ children }) {
   const dispatch = useDispatch();
@@ -38,12 +39,19 @@ function Modal({ children }) {
 
   return (
     <Overlay>
-      <StyledModal ref={modalRef}>
-        <Button onClick={handleClose}>
-          <XCircle size={20} color="red" />
-        </Button>
-        <div>{children}</div>
-      </StyledModal>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ ease: [0.16, 1, 0.3, 1] }}
+      >
+        <StyledModal ref={modalRef}>
+          <Button onClick={handleClose}>
+            <XCircle size={20} color="red" />
+          </Button>
+          <div>{children}</div>
+        </StyledModal>
+      </motion.div>
     </Overlay>
   );
 }
