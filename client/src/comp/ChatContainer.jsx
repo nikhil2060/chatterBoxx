@@ -29,7 +29,7 @@ import { motion } from "framer-motion";
 function ChatContainer() {
   const [messages, setMessages] = useState([]);
   const [page, setPage] = useState(1);
-
+  const { socket } = useSocket();
   const containerRef = useRef(null);
   const bottomRef = useRef(null);
   const navigate = useNavigate();
@@ -40,13 +40,11 @@ function ChatContainer() {
     (contact) => contact?._id === currentChatId
   );
 
-  const { isFileMenu, userTyping } = useSelector((state) => state.misc);
+  const members = currentContact?.members;
 
-  useEffect(() => {
-    if (bottomRef.current) {
-      bottomRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [messages]);
+  const userId = user?._id;
+
+  const { isFileMenu, userTyping } = useSelector((state) => state.misc);
 
   const {
     isLoading,
@@ -68,26 +66,12 @@ function ChatContainer() {
   }, [refetch, currentChatId, refetchMesseages]);
 
   useEffect(() => {
-    setMessages([]);
-    setPage(1);
-  }, [currentChatId]);
-
-  // useEffect(() => {
-  //   if (!chatData) return navigate("/");
-  // }, [chatData, navigate]);
-
-  // const { data: oldMessages, setData: setOldMessages } = useInfiniteScrollTop(
-  //   containerRef,
-  //   oldMessageData?.totalPages,
-  //   page,
-  //   setPage,
-  //   oldMessageData?.message
-  // );
-
-  const { socket } = useSocket();
+    if (bottomRef.current) {
+      bottomRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
 
   const newMessageHandler = useCallback((data) => {
-    // if (currentChatId?._id != data?.chatId) return;
     setMessages((prev) => [...prev, data]);
   }, []);
 
@@ -103,12 +87,28 @@ function ChatContainer() {
 
   useSocketEvents(socket, eventHandler);
 
+  const handleScroll = () => {
+    if (containerRef.current.scrollTop === 0) {
+      setPage((prev) => prev + 1);
+    }
+  };
+
+  useEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.addEventListener("scroll", handleScroll);
+      return () =>
+        containerRef.current.removeEventListener("scroll", handleScroll);
+    }
+  }, [containerRef.current]);
+
   if (isLoading) return <h1>Loading</h1>;
 
   if (isLoadingMessages) return <h1>Message loading</h1>;
 
-  // const allMessages = [...oldMessages, ...messages];
-  // console.log(oldMessageData);
+  const allMessages = [
+    ...(oldMessageData?.message || []),
+    ...messages.map((message) => message.message),
+  ];
 
   return (
     <motion.div
@@ -120,50 +120,28 @@ function ChatContainer() {
     >
       <ChatHeader />
 
-      <div className="chat-section w-full shadow-[0_3px_10px_rgb(0,0,0,0.2)] bg-[url('../src/assets/background.jpeg')] bg-contain flex-grow p-4 gap-5 flex flex-col overflow-auto overflow-x-hidden">
+      <div
+        ref={containerRef}
+        className="chat-section w-full shadow-[0_3px_10px_rgb(0,0,0,0.2)] bg-[url('../src/assets/background.jpeg')] bg-contain flex-grow p-4 gap-5 flex flex-col overflow-auto overflow-x-hidden"
+      >
         {isFileMenu && <FileMenu chatId={currentChatId} />}
 
-        {oldMessageData !== undefined &&
-          oldMessageData?.message.map((message, i) =>
-            message?.sender?._id != user?._id ? (
-              message?.content == "" ? (
-                message?.attachments.map((att, i) => (
-                  <MessageSenderPhoto att={att} key={i} />
-                ))
-              ) : (
-                <MessageSenderItem key={i}>
-                  {message?.content}
-                </MessageSenderItem>
-              )
-            ) : message?.content == "" ? (
-              message?.attachments.map((att, i) => (
-                <MessageReceiverPhoto att={att} key={i} />
+        {allMessages.map((message, i) =>
+          message?.sender?._id !== user?._id ? (
+            message?.content === "" ? (
+              message?.attachments.map((att, j) => (
+                <MessageSenderPhoto att={att} key={j} />
               ))
             ) : (
-              <MessageReceiverItem key={i}>
-                {message?.content}
-              </MessageReceiverItem>
+              <MessageSenderItem key={i}>{message?.content}</MessageSenderItem>
             )
-          )}
-
-        {messages.map((message, i) =>
-          message?.message?.sender?._id != user?._id ? (
-            message?.message?.content === "" ? (
-              message?.message?.attachments.map((att, i) => (
-                <MessageSenderPhoto att={att} key={i} />
-              ))
-            ) : (
-              <MessageSenderItem key={i}>
-                {message?.message?.content}
-              </MessageSenderItem>
-            )
-          ) : message?.message?.content === "" ? (
-            message?.message?.attachments.map((att, i) => (
-              <MessageReceiverPhoto att={att} key={i} />
+          ) : message?.content === "" ? (
+            message?.attachments.map((att, j) => (
+              <MessageReceiverPhoto att={att} key={j} />
             ))
           ) : (
             <MessageReceiverItem key={i}>
-              {message?.message?.content}
+              {message?.content}
             </MessageReceiverItem>
           )
         )}
@@ -209,7 +187,7 @@ function ChatInput({ chatId, members }) {
 
     typingTimeout.current = setTimeout(() => {
       socket.emit(STOP_TYPING, { chatId, members });
-      dispatch(setIamTyping(true));
+      dispatch(setIamTyping(false));
     }, [2000]);
   };
 
