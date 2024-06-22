@@ -28,6 +28,7 @@ import { motion } from "framer-motion";
 
 function ChatContainer() {
   const [messages, setMessages] = useState([]);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [page, setPage] = useState(1);
 
   const containerRef = useRef(null);
@@ -42,12 +43,6 @@ function ChatContainer() {
 
   const { isFileMenu, userTyping } = useSelector((state) => state.misc);
 
-  useEffect(() => {
-    if (bottomRef.current) {
-      bottomRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [messages]);
-
   const {
     isLoading,
     error,
@@ -59,13 +54,13 @@ function ChatContainer() {
     isLoading: isLoadingMessages,
     error: messsageError,
     data: oldMessageData,
-    refetch: refetchMesseages,
+    refetch: refetchMesseges,
   } = useGetChatMessages(currentChatId, page);
 
   useEffect(() => {
     refetch();
-    refetchMesseages();
-  }, [refetch, currentChatId, refetchMesseages]);
+    refetchMesseges();
+  }, [refetch, currentChatId, refetchMesseges]);
 
   useEffect(() => {
     setMessages([]);
@@ -76,17 +71,14 @@ function ChatContainer() {
   //   if (!chatData) return navigate("/");
   // }, [chatData, navigate]);
 
-  // const { data: oldMessages, setData: setOldMessages } = useInfiniteScrollTop(
-  //   containerRef,
-  //   oldMessageData?.totalPages,
-  //   page,
-  //   setPage,
-  //   oldMessageData?.message
-  // );
+  const totalPages = oldMessageData?.totalPages;
 
   const { socket } = useSocket();
 
   const newMessageHandler = useCallback((data) => {
+    console.log(currentChatId);
+    console.log(data);
+
     // if (currentChatId?._id != data?.chatId) return;
     setMessages((prev) => [...prev, data]);
   }, []);
@@ -102,6 +94,41 @@ function ChatContainer() {
   };
 
   useSocketEvents(socket, eventHandler);
+
+  const handleScroll = () => {
+    if (
+      containerRef.current.scrollTop === 0 &&
+      !isLoadingMessages &&
+      !loadingMore
+    ) {
+      setLoadingMore(true);
+      setPage((prevPage) => prevPage + 1);
+    }
+  };
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (container) {
+      container.addEventListener("scroll", handleScroll);
+    }
+    return () => {
+      if (container) {
+        container.removeEventListener("scroll", handleScroll);
+      }
+    };
+  }, [handleScroll]);
+
+  useEffect(() => {
+    if (page > 1 && page <= totalPages) {
+      refetchMesseges();
+    }
+  }, [page, refetchMesseges, totalPages]);
+
+  useEffect(() => {
+    if (bottomRef.current) {
+      bottomRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages, oldMessageData]);
 
   if (isLoading) return <h1>Loading</h1>;
 
@@ -120,7 +147,10 @@ function ChatContainer() {
     >
       <ChatHeader />
 
-      <div className="chat-section w-full shadow-[0_3px_10px_rgb(0,0,0,0.2)] bg-[url('../src/assets/background.jpeg')] bg-contain flex-grow p-4 gap-5 flex flex-col overflow-auto overflow-x-hidden">
+      <div
+        ref={containerRef}
+        className="chat-section w-full shadow-[0_3px_10px_rgb(0,0,0,0.2)] bg-[url('../src/assets/background.jpeg')] bg-contain flex-grow p-4 gap-5 flex flex-col overflow-auto overflow-x-hidden"
+      >
         {isFileMenu && <FileMenu chatId={currentChatId} />}
 
         {oldMessageData !== undefined &&
