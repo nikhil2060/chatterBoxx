@@ -79,7 +79,7 @@ function ChatContainer() {
     console.log(currentChatId);
     console.log(data);
 
-    // if (currentChatId?._id != data?.chatId) return;
+    if (currentChatId != data?.chatId) return;
     setMessages((prev) => [...prev, data]);
   }, []);
 
