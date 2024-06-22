@@ -29,6 +29,7 @@ import { motion } from "framer-motion";
 function ChatContainer() {
   const [messages, setMessages] = useState([]);
   const [page, setPage] = useState(1);
+  const [loadingMore, setLoadingMore] = useState(false);
   const { socket } = useSocket();
   const containerRef = useRef(null);
   const bottomRef = useRef(null);
@@ -40,11 +41,7 @@ function ChatContainer() {
     (contact) => contact?._id === currentChatId
   );
 
-  const members = currentContact?.members;
-
-  const userId = user?._id;
-
-  const { isFileMenu, userTyping } = useSelector((state) => state.misc);
+  const { isFileMenu } = useSelector((state) => state.misc);
 
   const {
     isLoading,
@@ -55,21 +52,29 @@ function ChatContainer() {
 
   const {
     isLoading: isLoadingMessages,
-    error: messsageError,
+    error: messageError,
     data: oldMessageData,
-    refetch: refetchMesseages,
+    refetch: refetchMessages,
   } = useGetChatMessages(currentChatId, page);
 
   useEffect(() => {
     refetch();
-    refetchMesseages();
-  }, [refetch, currentChatId, refetchMesseages]);
+    setMessages([]);
+    setPage(1);
+  }, [currentChatId, refetch]);
 
   useEffect(() => {
-    if (bottomRef.current) {
+    if (bottomRef.current && page === 1) {
       bottomRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
+
+  useEffect(() => {
+    if (oldMessageData?.message) {
+      setMessages((prev) => [...oldMessageData.message, ...prev]);
+      setLoadingMore(false);
+    }
+  }, [oldMessageData]);
 
   const newMessageHandler = useCallback((data) => {
     setMessages((prev) => [...prev, data]);
@@ -87,28 +92,40 @@ function ChatContainer() {
 
   useSocketEvents(socket, eventHandler);
 
-  const handleScroll = () => {
-    if (containerRef.current.scrollTop === 0) {
-      setPage((prev) => prev + 1);
+  const handleScroll = useCallback(() => {
+    if (
+      containerRef.current.scrollTop === 0 &&
+      !isLoadingMessages &&
+      !loadingMore
+    ) {
+      setLoadingMore(true);
+      setPage((prevPage) => prevPage + 1);
     }
-  };
+  }, [isLoadingMessages, loadingMore]);
 
   useEffect(() => {
-    if (containerRef.current) {
-      containerRef.current.addEventListener("scroll", handleScroll);
-      return () =>
-        containerRef.current.removeEventListener("scroll", handleScroll);
+    const container = containerRef.current;
+    if (container) {
+      container.addEventListener("scroll", handleScroll);
     }
-  }, [containerRef.current]);
+    return () => {
+      if (container) {
+        container.removeEventListener("scroll", handleScroll);
+      }
+    };
+  }, [handleScroll]);
+
+  useEffect(() => {
+    if (page > 1) {
+      refetchMessages();
+    }
+  }, [page, refetchMessages]);
 
   if (isLoading) return <h1>Loading</h1>;
 
-  if (isLoadingMessages) return <h1>Message loading</h1>;
+  if (isLoadingMessages && page === 1) return <h1>Message loading</h1>;
 
-  const allMessages = [
-    ...(oldMessageData?.message || []),
-    ...messages.map((message) => message.message),
-  ];
+  const allMessages = [...messages];
 
   return (
     <motion.div
