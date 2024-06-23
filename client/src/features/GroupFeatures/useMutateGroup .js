@@ -3,6 +3,7 @@ import { getMyFriends } from "../../services/apiUser";
 import {
   AddGroupMembers,
   deleteGroupChat,
+  leaveGroup,
   removeGroupMember,
 } from "../../services/apiGroup";
 import toast from "react-hot-toast";
@@ -53,4 +54,20 @@ export function useDeleteGroup() {
   });
 
   return { isDeleting, mutateDelete };
+}
+
+export function useLeaveGroup() {
+  const queryClient = useQueryClient();
+  const { isLoading: isLeaving, mutate: mutateLeave } = useMutation({
+    mutationFn: ({ currentChatId }) => {
+      return leaveGroup(currentChatId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries("myGroups");
+      queryClient.invalidateQueries("myChats");
+    },
+    onError: (err) => toast.error("Something went wrong"),
+  });
+
+  return { isLeaving, mutateLeave };
 }

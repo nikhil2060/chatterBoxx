@@ -5,7 +5,7 @@ import {
   getMyGroupsRoute,
   removeGroupMemberRoute,
 } from "../utils/GroupRoutes";
-import { getChatDetailsRoute } from "../utils/ChatRoutes";
+import { getChatDetailsRoute, leaveGroupRoute } from "../utils/ChatRoutes";
 
 export async function getMyGroups() {
   try {
@@ -131,5 +131,28 @@ export async function deleteGroupChat(chatId) {
     return data;
   } catch (err) {
     throw Error("Failed in deleting the group", err);
+  }
+}
+
+export async function leaveGroup(chatId) {
+  try {
+    const res = await fetch(`${leaveGroupRoute}/${chatId}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+
+    if (!res.ok) throw Error();
+
+    const data = await res.json();
+
+    if (data.status === true) {
+      toast.success(data.msg);
+    } else {
+      toast.error(data.msg);
+    }
+
+    return data;
+  } catch (err) {
+    throw Error("Failed in Leaving the group", err);
   }
 }

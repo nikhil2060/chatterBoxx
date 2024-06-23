@@ -235,37 +235,69 @@ module.exports.removeMember = async (req, res, next) => {
 module.exports.leaveGroup = async (req, res, next) => {
   try {
     const chatId = req.params.id;
+    const userId = req.user;
+
+    if (!userId) {
+      return res.status(400).json({
+        status: false,
+        msg: "User ID is required",
+      });
+    }
 
     const chat = await Chat.findById(chatId);
 
-    if (!chat)
+    if (!chat) {
       return res.status(404).json({
         status: false,
         msg: "No Chat Found",
       });
+    }
 
-    if (!chat.groupChat)
+    if (!chat.groupChat) {
       return res.status(400).json({
         status: false,
         msg: "This is not a group chat",
       });
+    }
 
-    const remainingMebers = chat.members.filter(
-      (member) => member.toString() !== req.user.toString()
+    const userIndex = chat.members.findIndex(
+      (member) => member && member.toString() === userId.toString()
     );
 
-    if (remainingMebers.length < 2)
+    if (userIndex === -1) {
+      return res.status(400).json({
+        status: false,
+        msg: "User is not a member of this group",
+      });
+    }
+
+    const remainingMembers = chat.members.filter(
+      (member) => member && member.toString() !== userId.toString()
+    );
+
+    if (remainingMembers.length < 2) {
       return res.status(400).json({
         status: false,
         msg: "Group must have at least 3 members",
       });
-
-    if (chat.creater.toString() === req.user.toString()) {
-      const newCreater = remainingMebers[0];
-      chat.creater = newCreater;
     }
 
-    const user = await User.findById(req.user, "name");
+    // If the user leaving is the creator, assign a new creator
+    if (chat.creator && chat.creator.toString() === userId.toString()) {
+      chat.creator = remainingMembers[0];
+    }
+
+    // Remove the user from the chat members
+    chat.members = remainingMembers;
+
+    const user = await User.findById(userId, "name");
+
+    if (!user) {
+      return res.status(400).json({
+        status: false,
+        msg: "User not found",
+      });
+    }
 
     await chat.save();
 
@@ -273,7 +305,7 @@ module.exports.leaveGroup = async (req, res, next) => {
 
     return res.status(200).json({
       status: true,
-      msg: "Member Remove Succesfully",
+      msg: "Group left successfully",
     });
   } catch (error) {
     next(error);

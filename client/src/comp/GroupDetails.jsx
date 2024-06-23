@@ -4,6 +4,7 @@ import { useGetChatDetails } from "../features/chatFeatures/useChatDetails";
 import { XCircle } from "@phosphor-icons/react";
 import {
   useDeleteGroup,
+  useLeaveGroup,
   useRemoveGroupMember,
 } from "../features/GroupFeatures/useMutateGroup ";
 import { setIsAddGroupMember } from "../redux/reducer/miscSlice";
@@ -18,6 +19,8 @@ function GroupDetails({ currentChatId }) {
   const { isRemoving, mutateRemove } = useRemoveGroupMember();
 
   const { isDeleting, mutateDelete } = useDeleteGroup();
+
+  const { isLeaving, mutateLeave } = useLeaveGroup();
 
   const dispatch = useDispatch();
 
@@ -37,6 +40,11 @@ function GroupDetails({ currentChatId }) {
     navigate("/");
   };
 
+  const handleLeaveGroup = () => {
+    mutateLeave({ currentChatId });
+    navigate("/");
+  };
+
   return (
     <ChatDetailsContainer>
       <ImageContainer>
@@ -53,6 +61,7 @@ function GroupDetails({ currentChatId }) {
       <ButtonsContainer>
         <Button onClick={handleAddMember}>Add Member</Button>
         <Button onClick={handleDeleteGroup}>Delete Group</Button>
+        <Button onClick={handleLeaveGroup}>Leave Group</Button>
       </ButtonsContainer>
       <h4>Members:</h4>
       <MembersList>
@@ -70,7 +79,7 @@ const MembersListItem = ({ friend, onRemove }) => (
       <img src={friend?.avatar} alt="" />
     </MemberImage>
     <MemberName>{friend?.name}</MemberName>
-    <RemoveButton onClick={() => onRemove(friend?._id)}>
+    <RemoveButton onClick={() => onRemove(friend?._id)} title="remove member">
       <XCircle size={20} color="red" />
     </RemoveButton>
   </MemberItem>
@@ -176,7 +185,7 @@ const ButtonsContainer = styled.div`
 
 const Button = styled.button`
   background-color: #b3d3f1;
-  font-size: 14px;
+  font-size: 10px;
   color: white;
   border: none;
   padding: 5px 15px;
