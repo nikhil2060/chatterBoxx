@@ -5,6 +5,7 @@ import {
   deleteGroupChat,
   leaveGroup,
   removeGroupMember,
+  renameGroup,
 } from "../../services/apiGroup";
 import toast from "react-hot-toast";
 
@@ -70,4 +71,20 @@ export function useLeaveGroup() {
   });
 
   return { isLeaving, mutateLeave };
+}
+
+export function useRenameGroup() {
+  const queryClient = useQueryClient();
+  const { isLoading: isRenaming, mutate: mutateRename } = useMutation({
+    mutationFn: ({ currentChatId, newGroupName }) => {
+      return renameGroup(currentChatId, newGroupName);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries("myGroups");
+      queryClient.invalidateQueries("myChats");
+    },
+    onError: (err) => toast.error("Something went wrong"),
+  });
+
+  return { isRenaming, mutateRename };
 }

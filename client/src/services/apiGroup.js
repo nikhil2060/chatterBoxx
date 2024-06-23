@@ -156,3 +156,30 @@ export async function leaveGroup(chatId) {
     throw Error("Failed in Leaving the group", err);
   }
 }
+
+export async function renameGroup(chatId, name) {
+  try {
+    const res = await fetch(`${getChatDetailsRoute}/${chatId}`, {
+      body: JSON.stringify({ chatId, name }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "PUT",
+      credentials: "include",
+    });
+
+    if (!res.ok) throw Error();
+
+    const data = await res.json();
+
+    if (data.status === true) {
+      toast.success(data.msg);
+    } else {
+      toast.error(data.msg);
+    }
+
+    return data;
+  } catch (err) {
+    throw Error("Failed in Renaming the group", err);
+  }
+}

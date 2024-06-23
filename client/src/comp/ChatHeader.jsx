@@ -19,7 +19,7 @@ function ChatHeader() {
   }, [currentChatId]);
 
   return (
-    <div className="chat-header w-full min-h-[4.5rem] rounded-t-xl bg-zinc-100 shadow-[0_3px_10px_rgb(0,0,0,0.2)] z-20 flex items-center pr-6 justify-between">
+    <div className="chat-header w-full min-h-[4.5rem] rounded-t-xl bg-zinc-100 shadow-[0_3px_10px_rgb(0,0,0,0.2)] z-[200] flex items-center pr-6 justify-between">
       <div className="flex items-center pl-6 pr-6 gap-5">
         <div
           className="w-12 h-12 bg-zinc-600 rounded-full overflow-hidden bg-contain border-[#00223f] border-[1.5px]"

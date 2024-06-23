@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { useGetChatDetails } from "../features/chatFeatures/useChatDetails";
-import { XCircle } from "@phosphor-icons/react";
+import { PencilSimple, XCircle } from "@phosphor-icons/react";
 import {
   useDeleteGroup,
   useLeaveGroup,
   useRemoveGroupMember,
+  useRenameGroup,
 } from "../features/GroupFeatures/useMutateGroup ";
 import { setIsAddGroupMember } from "../redux/reducer/miscSlice";
 import { useDispatch } from "react-redux";
@@ -17,12 +18,14 @@ function GroupDetails({ currentChatId }) {
   const { isLoading, error, data } = useGetChatDetails(currentChatId, "true");
 
   const { isRemoving, mutateRemove } = useRemoveGroupMember();
-
   const { isDeleting, mutateDelete } = useDeleteGroup();
-
   const { isLeaving, mutateLeave } = useLeaveGroup();
+  const { isRenaming, mutateRename } = useRenameGroup(); // Use rename group mutation
 
   const dispatch = useDispatch();
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [newGroupName, setNewGroupName] = useState("");
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
@@ -45,6 +48,12 @@ function GroupDetails({ currentChatId }) {
     navigate("/");
   };
 
+  const handleRenameGroup = () => {
+    mutateRename({ currentChatId, newGroupName });
+    setIsEditing(false);
+    setNewGroupName("");
+  };
+
   return (
     <ChatDetailsContainer>
       <ImageContainer>
@@ -56,8 +65,29 @@ function GroupDetails({ currentChatId }) {
           alt="Profile"
         />
       </ImageContainer>
-      <UserName>{data?.name || "Name"}</UserName>
-      {/* <PhoneNumber>{data?.bio || "This is bio"}</PhoneNumber> */}
+      <UserName>
+        {isEditing ? (
+          <>
+            <Input
+              type="text"
+              value={newGroupName}
+              onChange={(e) => setNewGroupName(e.target.value)}
+            />
+            <Button onClick={handleRenameGroup}>Save</Button>
+          </>
+        ) : (
+          <>
+            <div onClick={() => setIsEditing(true)} title="rename group">
+              {" "}
+              {data?.name || "Name"}
+            </div>
+
+            {/* <EditButton onClick={() => setIsEditing(true)}>
+              <PencilSimple size={20} />
+            </EditButton> */}
+          </>
+        )}
+      </UserName>
       <ButtonsContainer>
         <Button onClick={handleAddMember}>Add Member</Button>
         <Button onClick={handleDeleteGroup}>Delete Group</Button>
@@ -124,9 +154,21 @@ const MemberName = styled.span`
   margin-left: 10px;
 `;
 
+const Input = styled.input`
+  width: 100%;
+  border-radius: 50px;
+  height: 40px;
+  padding: 10px;
+  font-weight: 400;
+  color: #555;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  /* box-shadow: 0px 10px 20px 1px #3333331d; */
+`;
+
 const ChatDetailsContainer = styled.div`
   position: absolute;
-  top: 70px;
+  top: 71px;
   left: 0;
   width: 300px;
   display: flex;
@@ -134,8 +176,8 @@ const ChatDetailsContainer = styled.div`
   gap: 10px;
   background-color: #fff;
   padding: 15px;
-  border-radius: 0px 0px 0px 5px;
-  box-shadow: 0px 0px 10px #3333335e;
+  border-radius: 0px 0px 5px 5px;
+  /* box-shadow: 0px 0px 10px #3333335e; */
   z-index: 10;
   color: #aaaaaa;
 `;
@@ -168,6 +210,12 @@ const UserName = styled.div`
   text-align: center;
   font-size: 20px;
   font-weight: bold;
+
+  input {
+    margin: 5px 0;
+    padding: 5px;
+    font-size: 14px;
+  }
 `;
 
 const PhoneNumber = styled.div`
@@ -179,7 +227,6 @@ const ButtonsContainer = styled.div`
   display: flex;
   justify-content: center;
   gap: 10px;
-  /* justify-content: space-around; */
   margin: 10px 0;
 `;
 
@@ -190,6 +237,20 @@ const Button = styled.button`
   border: none;
   padding: 5px 15px;
   border-radius: 59px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #555;
+  }
+`;
+
+const EditButton = styled.button`
+  background-color: #152029;
+  font-size: 10px;
+  color: white;
+  border: none;
+  /* padding: 5px 15px; */
+  border-radius: 50%;
   cursor: pointer;
 
   &:hover {
