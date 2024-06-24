@@ -379,7 +379,7 @@ module.exports.getChatDetails = async (req, res, next) => {
   try {
     if (req.query.populate === "true") {
       const chat = await Chat.findById(req.params.id)
-        .populate("members", "name avatar username")
+        .populate("members", "name avatar username bio")
         .lean();
 
       if (!chat)
@@ -388,12 +388,15 @@ module.exports.getChatDetails = async (req, res, next) => {
           msg: "Chat not found",
         });
 
-      chat.members = chat.members.map(({ _id, name, avatar, username }) => ({
-        _id,
-        name,
-        username,
-        avatar: avatar.url,
-      }));
+      chat.members = chat.members.map(
+        ({ _id, name, avatar, username, bio }) => ({
+          _id,
+          name,
+          username,
+          bio,
+          avatar: avatar.url,
+        })
+      );
 
       return res.status(200).json({
         status: true,

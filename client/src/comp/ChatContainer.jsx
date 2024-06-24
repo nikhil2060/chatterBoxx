@@ -37,6 +37,8 @@ function ChatContainer() {
   const { user } = useSelector((state) => state.auth);
   const { currentChatId, myChats } = useSelector((state) => state.chat);
 
+  const disable = currentChatId !== "" ? true : false;
+
   const currentContact = myChats.find(
     (contact) => contact?._id === currentChatId
   );
@@ -226,8 +228,6 @@ function ChatInput({ chatId, members }) {
     socket.emit(NEW_MESSAGE, { chatId, members, message });
     setMessage("");
   };
-
-  console.log(disable);
 
   const handleFileOpen = () => {
     if (!disable) return;

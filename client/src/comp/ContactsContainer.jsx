@@ -17,6 +17,7 @@ import { resetNotificatinCount } from "../redux/reducer/chatNoteSlice";
 import ChatsList from "./ChatsList";
 import GroupsList from "./GroupsList";
 import UserMenu from "./userActionMenu";
+import styled from "styled-components";
 
 function ContactsContainer() {
   const dispatch = useDispatch();
@@ -113,17 +114,74 @@ function MyProfile() {
   const { user } = useSelector((state) => state.auth);
 
   return (
-    <div className="profile-section flex flex-col p-20 gap-10 items-center w-full bg-zinc-100 flex-grow overflow-auto rounded-b-xl">
-      <div className="w-[10rem] h-[10rem] bg-red-300 rounded-full ">
-        <img src={user.avatar.url} alt="profilePic" />
-      </div>
-      <div className="flex flex-col gap-5 items-center">
-        <span>Username : {user.username}</span>
-        <span>Name : {user.name}</span>
-        <span>ABOUt</span>
-      </div>
-    </div>
+    <ProfileSection>
+      <AvatarContainer>
+        <Avatar src={user.avatar.url} alt="profilePic" />
+      </AvatarContainer>
+      <UserInfo>
+        <UserDetail>
+          <strong>Username:</strong> {user.username}
+        </UserDetail>
+        <UserDetail>
+          <strong>Name:</strong> {user.name}
+        </UserDetail>
+        <UserDetail>
+          <strong>Email:</strong> {user.email}
+        </UserDetail>
+        <UserDetail>
+          <strong>Bio:</strong> {user.bio || "No bio available"}
+        </UserDetail>
+      </UserInfo>
+    </ProfileSection>
   );
 }
+
+const ProfileSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  gap: 20px;
+  width: 100%;
+  background-color: #f4f4f4;
+  border-radius: 0 0 10px 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+`;
+
+const AvatarContainer = styled.div`
+  width: 10rem;
+  height: 10rem;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid #ddd;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff;
+`;
+
+const Avatar = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+`;
+
+const UserInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+  color: #333;
+`;
+
+const UserDetail = styled.span`
+  font-size: 1rem;
+  color: #666;
+
+  strong {
+    color: #333;
+  }
+`;
 
 export default ContactsContainer;
