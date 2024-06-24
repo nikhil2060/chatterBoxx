@@ -66,42 +66,6 @@ function FileMenu({ chatId }) {
           onChange={(e) => fileChangeHandler(e, "Images")}
         />
       </StyledItem>
-      <StyledItem>
-        <Headphones size={15} />
-        <label htmlFor="audio">Audio</label>
-        <input
-          type="file"
-          id="audio"
-          accept="audio/mpeg, audio/wav, audio/ogg"
-          hidden
-          multiple
-          onChange={(e) => fileChangeHandler(e, "Audios")}
-        />
-      </StyledItem>
-      <StyledItem>
-        <Video size={15} />
-        <label htmlFor="video">Video</label>
-        <input
-          type="file"
-          id="video"
-          accept="video/mp4, video/webm, video/ogg"
-          hidden
-          multiple
-          onChange={(e) => fileChangeHandler(e, "Videos")}
-        />
-      </StyledItem>
-      <StyledItem>
-        <File size={15} />
-        <label htmlFor="file">File</label>
-        <input
-          type="file"
-          id="file"
-          accept="*"
-          hidden
-          multiple
-          onChange={(e) => fileChangeHandler(e, "files")}
-        />
-      </StyledItem>
     </StyledMenu>
   );
 }

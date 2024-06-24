@@ -69,19 +69,11 @@ function ChatContainer() {
     setPage(1);
   }, [currentChatId]);
 
-  // useEffect(() => {
-  //   if (!chatData) return navigate("/");
-  // }, [chatData, navigate]);
-
   const totalPages = oldMessageData?.totalPages;
 
   const { socket } = useSocket();
 
   const newMessageHandler = useCallback((data) => {
-    console.log(currentChatId);
-    console.log(data);
-
-    if (currentChatId != data?.chatId) return;
     setMessages((prev) => [...prev, data]);
   }, []);
 
@@ -137,7 +129,6 @@ function ChatContainer() {
   if (isLoadingMessages) return <h1>Message loading</h1>;
 
   // const allMessages = [...oldMessages, ...messages];
-  // console.log(oldMessageData);
 
   return (
     <motion.div

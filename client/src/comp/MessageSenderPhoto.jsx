@@ -4,11 +4,9 @@ import styled from "styled-components";
 function MessageSenderPhoto({ att }) {
   return (
     <OuterDiv>
-      <ImgDiv>
-        <a href={att.url} target="_blank" rel="noopener noreferrer">
-          <img src={att.url} alt="sender image" />
-        </a>
-      </ImgDiv>
+      <ImgLink href={att.url} target="_blank" rel="noopener noreferrer">
+        <img src={att.url} alt="receiver image" />
+      </ImgLink>
     </OuterDiv>
   );
 }
@@ -18,7 +16,7 @@ const OuterDiv = styled.div`
   width: 30%;
   padding: 10px;
   text-align: left;
-  border-radius: 20px 0px 20px 20px;
+  border-radius: 0px 20px 20px 20px;
 
   display: flex;
   align-items: center;
@@ -29,17 +27,13 @@ const OuterDiv = styled.div`
   box-shadow: 0px 0px 15px #3333332a;
 `;
 
-const ImgDiv = styled.div`
-  margin-left: 3px;
-  width: 30px;
-  min-width: 30px;
-  min-height: 30px;
+const ImgLink = styled.a`
   overflow: hidden;
-  border-radius: 100%;
+  border-radius: 15px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid #fff;
+  border: 1px solid #ffffff55;
 
   img {
     max-width: 100%;
