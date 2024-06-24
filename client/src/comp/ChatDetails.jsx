@@ -1,51 +1,69 @@
 import React from "react";
 import styled from "styled-components";
 import { useGetChatDetails } from "../features/chatFeatures/useChatDetails";
+import { useDispatch, useSelector } from "react-redux";
+import { useDeleteGroup } from "../features/GroupFeatures/useMutateGroup ";
+import { useNavigate } from "react-router-dom";
+import { setCurrentChat } from "../redux/reducer/chatSlice";
 
 function ChatDetails({ currentChatId }) {
-    
-    
+  const { user } = useSelector((state) => state.auth);
+
+  const navigate = useNavigate();
+
+  const dispatch = useDispatch();
+
+  const { isLoading, error, data } = useGetChatDetails(currentChatId, "true");
+
+  const { isDeleting, mutateDelete } = useDeleteGroup();
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+
+  const otherMember = data.members.filter((mem) => mem._id !== user._id);
+
+  const handleDeleteGroup = () => {
+    mutateDelete({ currentChatId });
+    dispatch(setCurrentChat(""));
+    navigate("/");
+  };
 
   return (
     <ChatDetailsContainer>
       <Header>
-        <h2>username</h2>
+        <h2>{otherMember[0]?.username || "No other members"}</h2>
       </Header>
       <ImageContainer>
         <img
-          src="https://cdn.pixabay.com/photo/2021/07/02/04/48/user-6380868_640.png"
+          src={
+            otherMember[0]?.avatar ||
+            "https://cdn.pixabay.com/photo/2021/07/02/04/48/user-6380868_640.png"
+          }
           alt="Profile"
         />
       </ImageContainer>
-      <UserName>Name</UserName>
-      <PhoneNumber>this is bio</PhoneNumber>
+      <UserName>{otherMember[0]?.name || "Name not available"}</UserName>
       <ButtonsContainer>
-        <Button>Audio</Button>
-        <Button>Video</Button>
-        <Button>Search</Button>
+        <Button onClick={handleDeleteGroup}>Remove friend</Button>
       </ButtonsContainer>
-      <OptionsContainer>
-        <Option>Media, links and docs</Option>
-        <Option>Starred messages</Option>
-      </OptionsContainer>
     </ChatDetailsContainer>
   );
 }
 
 const ChatDetailsContainer = styled.div`
   position: absolute;
-  top: 70px;
+  top: 71px;
   left: 0;
   width: 300px;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  background-color: #969494;
+  background-color: #fff;
   padding: 15px;
-  border-radius: 0px 0px 0px 5px;
-  box-shadow: 0px 0px 10px #33333330;
+  border-radius: 0px 0px 5px 5px;
+  /* box-shadow: 0px 0px 10px #3333335e; */
   z-index: 10;
-  color: white;
+  color: #aaaaaa;
 `;
 
 const Header = styled.div`
@@ -82,11 +100,12 @@ const ButtonsContainer = styled.div`
 `;
 
 const Button = styled.button`
-  background-color: #444;
+  background-color: #b3d3f1;
+  font-size: 10px;
   color: white;
   border: none;
-  padding: 10px 15px;
-  border-radius: 5px;
+  padding: 5px 15px;
+  border-radius: 59px;
   cursor: pointer;
 
   &:hover {

@@ -212,9 +212,13 @@ function ChatInput({ chatId, members }) {
   const { socket } = useSocket();
   const typingTimeout = useRef(null);
 
+  const { currentChatId } = useSelector((state) => state.chat);
+
   const { isFileMenu, iamTyping, userTyping } = useSelector(
     (state) => state.misc
   );
+
+  const disable = currentChatId !== "" ? true : false;
 
   const handleSendMessage = () => {
     if (!message.trim()) return;
@@ -223,7 +227,10 @@ function ChatInput({ chatId, members }) {
     setMessage("");
   };
 
+  console.log(disable);
+
   const handleFileOpen = () => {
+    if (!disable) return;
     dispatch(setIsFileMenu(!isFileMenu));
   };
 
@@ -270,6 +277,7 @@ function ChatInput({ chatId, members }) {
       <button
         className="rounded-full bg-[#B4D4F2] p-2 flex items-center justify-center shadow-lg"
         onClick={handleSendMessage}
+        disabled={disable}
       >
         <PaperPlaneRight size={26} color="#666" />
       </button>

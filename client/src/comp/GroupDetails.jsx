@@ -11,6 +11,7 @@ import {
 import { setIsAddGroupMember } from "../redux/reducer/miscSlice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { setCurrentChat } from "../redux/reducer/chatSlice";
 
 function GroupDetails({ currentChatId }) {
   const navigate = useNavigate();
@@ -42,11 +43,13 @@ function GroupDetails({ currentChatId }) {
 
   const handleDeleteGroup = () => {
     mutateDelete({ currentChatId });
+    dispatch(setCurrentChat(""));
     navigate("/");
   };
 
   const handleLeaveGroup = () => {
     mutateLeave({ currentChatId });
+    dispatch(setCurrentChat(""));
     navigate("/");
   };
 
