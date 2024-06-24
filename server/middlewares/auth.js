@@ -27,14 +27,16 @@ const socketAuthenticator = async (err, socket, next) => {
     // console.log(authToken);
 
     if (!authToken)
-      res.json({ status: false, msg: "Please login to access this route" });
+      // res.json({ status: false, msg: "Please login to access this route" });
+      return;
 
     const decodedData = jwt.verify(authToken, process.env.JWT_SECRET);
 
     const user = await User?.findById(decodedData?._id);
 
     if (!user)
-      res.json({ status: false, msg: "Please login to access this route" });
+      // res.json({ status: false, msg: "Please login to access this route" });
+      return;
 
     socket.user = user;
 

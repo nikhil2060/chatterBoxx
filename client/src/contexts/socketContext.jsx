@@ -3,6 +3,8 @@ import io from "socket.io-client";
 
 const socketContext = createContext();
 
+const serverUrl = import.meta.env.VITE_SERVER;
+
 const useSocket = () => {
   //custom hook
   const socket = useContext(socketContext);
@@ -14,7 +16,7 @@ const useSocket = () => {
 
 function SocketProvider({ children }) {
   const socket = useMemo(() => {
-    return io("http://localhost:3000", {
+    return io(serverUrl, {
       withCredentials: "include",
     });
   }, []);

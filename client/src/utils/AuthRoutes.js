@@ -1,4 +1,5 @@
-const host = `http://localhost:3000`;
+// const host = `http://localhost:3000`;
+const host = import.meta.env.VITE_SERVER;
 
 // import { server as host } from "../contants/config";
 

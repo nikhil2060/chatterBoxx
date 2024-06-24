@@ -56,7 +56,6 @@ function UserMenu({ chatId }) {
   return (
     <StyledMenu ref={menuRef}>
       <StyledItem onClick={handleNewGroup}>New group</StyledItem>
-      <StyledItem>Dark mode</StyledItem>
       <StyledItem onClick={handleLogout}>Logout</StyledItem>
     </StyledMenu>
   );
@@ -66,7 +65,7 @@ const StyledMenu = styled.div`
   position: absolute;
   top: 70px;
   right: 0;
-  height: 100px;
+  height: 80px;
   display: flex;
   flex-direction: column;
   gap: 2px;

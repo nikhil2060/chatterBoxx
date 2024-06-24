@@ -1,4 +1,7 @@
-const host = `http://localhost:3000`;
+// const host = `http://localhost:3000`;
+const host = import.meta.env.VITE_SERVER;
+
+console.log(host);
 
 export const getSearchUserRoute = `${host}/api/auth/user/search?name=`;
 
