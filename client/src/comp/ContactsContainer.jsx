@@ -66,11 +66,8 @@ function ContactsContainer() {
               size={24}
               color="#00223f"
               className="mouse-cursor"
-              onClick={notificationCount ? handleNotificationClick : null}
+              onClick={handleNotificationClick}
             />
-            <span className="absolute top-0 right-0 bg-red-500 rounded-full text-white text-[10px] flex items-center justify-center w-3 h-3">
-              {notificationCount}
-            </span>
           </div>
 
           <UserCirclePlus

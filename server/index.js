@@ -136,16 +136,3 @@ server.listen(process.env.PORT, () => {
     `Server started on ${process.env.PORT} in ${process.env.NODE_ENV} Mode`
   );
 });
-
-// createUser(10);
-
-// createSingleChats(10);
-// createGroupChats(10);
-// createMessagesInAChat("661a19d630dd1234540672a1", 10);
-
-// const {
-//   createUser,
-//   createGroupChats,
-//   createSingleChats,
-//   createMessagesInAChat,
-// } = require("./seeders/chatSeeders");

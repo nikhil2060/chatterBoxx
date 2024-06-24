@@ -277,7 +277,7 @@ function ChatInput({ chatId, members }) {
       <button
         className="rounded-full bg-[#B4D4F2] p-2 flex items-center justify-center shadow-lg"
         onClick={handleSendMessage}
-        disabled={disable}
+        // disabled={disable}
       >
         <PaperPlaneRight size={26} color="#666" />
       </button>

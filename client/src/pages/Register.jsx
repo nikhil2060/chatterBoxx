@@ -17,7 +17,6 @@ function Register() {
   const navigate = useNavigate();
 
   const afterSubmit = async (data) => {
-    console.log(data);
     const formData = new FormData();
 
     // Append fields other than the file

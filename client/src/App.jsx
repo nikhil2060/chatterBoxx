@@ -15,10 +15,9 @@ import toast, { Toaster } from "react-hot-toast";
 import { SocketProvider } from "./contexts/socketContext";
 
 const queryClient = new QueryClient({
-  // sets cache behind the scenes
   defaultOptions: {
     queries: {
-      staleTime: 60 * 1000, // time upto which data will remain fresh in the cache
+      staleTime: 60 * 1000,
     },
   },
 });

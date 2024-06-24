@@ -18,6 +18,7 @@ import {
 } from "../features/UserFeatures/useNotifications";
 import { setIsNotification } from "../redux/reducer/miscSlice";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 function Notification() {
   const { isLoading, data, error } = useGetNotifications();
@@ -57,6 +58,9 @@ export default Notification;
 
 function NotificationItem({ avatar, name, username, id }) {
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
+
+  const navigate = useNavigate();
 
   const { isAccepting, mutateRequest } = useAcceptRequest();
   const handleAcceptRequest = async () => {
@@ -64,6 +68,9 @@ function NotificationItem({ avatar, name, username, id }) {
       requestId: id,
       accept: true,
     });
+    queryClient.invalidateQueries("myGroups");
+    queryClient.invalidateQueries("myChats");
+    navigate("/");
     dispatch(setIsNotification(false));
   };
 
