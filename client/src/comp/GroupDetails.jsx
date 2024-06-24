@@ -20,7 +20,7 @@ function GroupDetails({ currentChatId }) {
   const { isRemoving, mutateRemove } = useRemoveGroupMember();
   const { isDeleting, mutateDelete } = useDeleteGroup();
   const { isLeaving, mutateLeave } = useLeaveGroup();
-  const { isRenaming, mutateRename } = useRenameGroup(); // Use rename group mutation
+  const { isRenaming, mutateRename } = useRenameGroup();
 
   const dispatch = useDispatch();
 
@@ -29,6 +29,8 @@ function GroupDetails({ currentChatId }) {
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
+
+  // console.log(data);
 
   const handleRemove = (memberId) => {
     mutateRemove({ currentChatId, memberId });

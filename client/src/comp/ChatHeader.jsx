@@ -12,10 +12,14 @@ function ChatHeader() {
 
   const isGroupChat = currentContact?.groupChat;
 
-  const [isDetail, setIsDetails] = useState(false);
+  const [isDetail, setIsDetail] = useState(false);
+
+  const avatarUrl = currentContact?.groupChat
+    ? "https://cdn.pixabay.com/photo/2021/07/02/04/48/user-6380868_640.png"
+    : currentContact?.avatar;
 
   useEffect(() => {
-    setIsDetails(false);
+    setIsDetail(false);
   }, [currentChatId]);
 
   return (
@@ -23,10 +27,14 @@ function ChatHeader() {
       <div className="flex items-center pl-6 pr-6 gap-5">
         <div
           className="w-12 h-12 bg-zinc-600 rounded-full overflow-hidden bg-contain border-[#00223f] border-[1.5px]"
-          onClick={() => setIsDetails(!isDetail)}
+          onClick={() => setIsDetail(!isDetail)}
         >
           <img
-            src={!currentChatId ? `../usericon.jpeg` : currentContact?.avatar}
+            src={
+              !currentChatId
+                ? `https://cdn.pixabay.com/photo/2021/07/02/04/48/user-6380868_640.png`
+                : avatarUrl
+            }
             alt="profilePic1"
           />
         </div>
