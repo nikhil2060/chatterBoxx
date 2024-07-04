@@ -91,11 +91,8 @@ export async function acceptRequest(requestId, accept) {
   }
 }
 
-export async function getMyFriends(chatId = "") {
+export async function getMyFriends() {
   let url = getMyFriendsRoute;
-  // if (chatId != "") {
-  //   url += `?chatId=${chatId}`;
-  // }
 
   try {
     const res = await fetch(url, {

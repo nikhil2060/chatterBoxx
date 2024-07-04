@@ -1,13 +1,10 @@
 import { useDispatch, useSelector } from "react-redux";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { UsersProvider } from "./contexts/UsersContext";
-import Chat from "./pages/Chat";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
 import GlobalStyles from "./styles/GlobalStyles";
 
 import axios from "axios";
-import { useEffect } from "react";
+import { useEffect, Suspense, lazy } from "react";
 import { userExists, userNotExists } from "./redux/reducer/authSlice";
 import { getMyProfileRoute } from "./utils/AuthRoutes";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -21,6 +18,11 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+// Lazy load components
+const Chat = lazy(() => import("./pages/Chat"));
+const Login = lazy(() => import("./pages/Login"));
+const Register = lazy(() => import("./pages/Register"));
 
 function App() {
   const { user } = useSelector((state) => state.auth);
@@ -39,7 +41,10 @@ function App() {
           dispatch(userExists(data.user));
         }
       })
-      .catch((err) => dispatch(userNotExists()));
+      .catch((err) => {
+        console.error(err); // Log the error or handle it
+        dispatch(userNotExists());
+      });
   }, [dispatch]);
 
   return (
@@ -49,12 +54,14 @@ function App() {
           <BrowserRouter>
             <GlobalStyles />
             {user && <Navigate to={`/chat/${user._id}`} />}
-            <Routes>
-              <Route path="chat/:chatId" element={<Chat />} />
-              <Route path="register" element={<Register />}></Route>
-              <Route index element={<Login />}></Route>
-              <Route path="login" element={<Login />} />
-            </Routes>
+            <Suspense fallback={<div>Loading...</div>}>
+              <Routes>
+                <Route path="chat/:chatId" element={<Chat />} />
+                <Route path="register" element={<Register />} />
+                <Route index element={<Login />} />
+                <Route path="login" element={<Login />} />
+              </Routes>
+            </Suspense>
           </BrowserRouter>
         </UsersProvider>
       </SocketProvider>

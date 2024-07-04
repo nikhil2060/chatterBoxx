@@ -8,7 +8,6 @@ import useSocketEvents from "../hooks/useSocketEvents";
 import {
   NEW_MESSAGE_ALERT,
   NEW_REQUEST,
-  REFETCH_CHATS,
   START_TYPING,
   STOP_TYPING,
 } from "../contants/event";
@@ -35,7 +34,6 @@ function Chat() {
   const { isCreateGroup, isAddGroupMember } = useSelector(
     (state) => state.misc
   );
-  const { currentChatId } = useSelector((state) => state.chat);
 
   const newMessageHandler = useCallback(
     (data) => {
@@ -89,7 +87,7 @@ function Chat() {
   }, [user, navigate]);
 
   return (
-    <div className="w-full h-[100vh] bg-red-200 flex items-center justify-center bg-gradient-to-r from-rose-50 to-teal-50 relative">
+    <div className="w-full h-[100vh] bg-red-200 flex items-center justify-center bg-gradient-to-r from-rose-50 to-teal-50 relative flex-col">
       {isSearch && (
         <Modal>
           <SearchWindow />
@@ -117,6 +115,15 @@ function Chat() {
         <ContactsContainer />
         <ChatContainer />
       </motion.div>
+
+      <footer className=" text-grey-500 py-5 text-center absolute bottom-1">
+        <div className="container mx-auto">
+          <p className="text-sm">
+            &copy; {new Date().getFullYear()} ChatterBoxx. Created by Nikhil
+            Kumar Singh
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }

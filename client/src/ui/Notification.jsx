@@ -1,29 +1,17 @@
-import {
-  MagnifyingGlass,
-  UserCircle,
-  UserPlus,
-  UserCircleCheck,
-  Check,
-  X,
-} from "@phosphor-icons/react";
-import React, { useEffect, useState } from "react";
-import styled from "styled-components";
-import { useSearchUser } from "../features/UserFeatures/useSearchUser";
+import { Check, X } from "@phosphor-icons/react";
 import { useQueryClient } from "@tanstack/react-query";
-import { sendRequest } from "../services/apiUser";
-import toast from "react-hot-toast";
+import React from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import styled from "styled-components";
 import {
   useAcceptRequest,
   useGetNotifications,
 } from "../features/UserFeatures/useNotifications";
 import { setIsNotification } from "../redux/reducer/miscSlice";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
 
 function Notification() {
   const { isLoading, data, error } = useGetNotifications();
-
-  const dispatch = useDispatch();
 
   if (isLoading) return <h1>LOADING...</h1>;
   if (error) return <h1>Error: {error.message}</h1>;
@@ -56,13 +44,13 @@ function Notification() {
 
 export default Notification;
 
-function NotificationItem({ avatar, name, username, id }) {
+function NotificationItem({ avatar, username, id }) {
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
 
   const navigate = useNavigate();
 
-  const { isAccepting, mutateRequest } = useAcceptRequest();
+  const { mutateRequest } = useAcceptRequest();
   const handleAcceptRequest = async () => {
     mutateRequest({
       requestId: id,

@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { getMyFriends } from "../../services/apiUser";
 
-export function useGetMyFriends(chatId) {
+export function useGetMyFriends() {
   const {
     isLoading,
     data: myFriends,

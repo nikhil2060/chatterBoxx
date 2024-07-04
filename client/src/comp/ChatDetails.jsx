@@ -1,11 +1,11 @@
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { useGetChatDetails } from "../features/chatFeatures/useChatDetails";
-import { useDispatch, useSelector } from "react-redux";
 
 import { useNavigate } from "react-router-dom";
-import { setCurrentChat } from "../redux/reducer/chatSlice";
 import { useDeleteGroup } from "../features/GroupFeatures/useMutateGroup ";
+import { setCurrentChat } from "../redux/reducer/chatSlice";
 
 function ChatDetails({ currentChatId }) {
   const { user } = useSelector((state) => state.auth);
@@ -15,7 +15,7 @@ function ChatDetails({ currentChatId }) {
 
   const { isLoading, error, data } = useGetChatDetails(currentChatId, "true");
 
-  const { isDeleting, mutateDelete } = useDeleteGroup();
+  const { mutateDelete } = useDeleteGroup();
 
   if (isLoading) return <Loading>Loading...</Loading>;
   if (error) return <Error>Error: {error.message}</Error>;
@@ -131,24 +131,6 @@ const Button = styled.button`
 
   &:hover {
     background-color: #a3c3e1;
-  }
-`;
-
-const OptionsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-`;
-
-const Option = styled.div`
-  background-color: #333;
-  padding: 10px;
-  border-radius: 5px;
-  cursor: pointer;
-  color: white;
-
-  &:hover {
-    background-color: #444;
   }
 `;
 

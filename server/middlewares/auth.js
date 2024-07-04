@@ -5,20 +5,37 @@ const isAuthenticated = async (req, res, next) => {
   try {
     const token = req.cookies["chatterBox-token"];
 
-    if (!token)
-      res.json({ status: false, msg: "Please login to access this route" });
+    if (!token) {
+      return res
+        .status(401)
+        .json({ status: false, msg: "Please login to access this route" });
+    }
 
     const decodedData = jwt.verify(token, process.env.JWT_SECRET);
-
-    // console.log(decodedData);
 
     req.user = decodedData._id;
 
     next();
   } catch (error) {
-    next(error);
+    if (error.name === "JsonWebTokenError") {
+      return res
+        .status(401)
+        .json({ status: false, msg: "Invalid token. Please login again." });
+    }
+    if (error.name === "TokenExpiredError") {
+      return res
+        .status(401)
+        .json({ status: false, msg: "Token expired. Please login again." });
+    }
+    // Handle other errors
+    console.error("JWT verification error:", error);
+    return res
+      .status(500)
+      .json({ status: false, msg: "Server error. Please try again later." });
   }
 };
+
+module.exports = isAuthenticated;
 
 const socketAuthenticator = async (err, socket, next) => {
   try {

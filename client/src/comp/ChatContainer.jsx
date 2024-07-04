@@ -35,26 +35,18 @@ function ChatContainer() {
   const bottomRef = useRef(null);
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
-  const { currentChatId, myChats } = useSelector((state) => state.chat);
+  const { currentChatId } = useSelector((state) => state.chat);
 
-  const disable = currentChatId !== "" ? true : false;
-
-  const currentContact = myChats.find(
-    (contact) => contact?._id === currentChatId
-  );
-
-  const { isFileMenu, userTyping } = useSelector((state) => state.misc);
+  const { isFileMenu } = useSelector((state) => state.misc);
 
   const {
     isLoading,
-    error,
     data: chatData,
     refetch,
   } = useGetChatDetails(currentChatId);
 
   const {
     isLoading: isLoadingMessages,
-    error: messsageError,
     data: oldMessageData,
     refetch: refetchMesseges,
   } = useGetChatMessages(currentChatId, page);
@@ -62,7 +54,7 @@ function ChatContainer() {
   useEffect(() => {
     refetch();
     refetchMesseges();
-  }, [refetch, currentChatId, refetchMesseges]);
+  }, [currentChatId, refetch, refetchMesseges]);
 
   useEffect(() => {
     setMessages([]);
@@ -73,14 +65,19 @@ function ChatContainer() {
 
   const { socket } = useSocket();
 
-  const newMessageHandler = useCallback((data) => {
-    setMessages((prev) => [...prev, data]);
-  }, []);
+  const newMessageHandler = useCallback(
+    (data) => {
+      if (currentChatId !== data.chatId) return;
+      setMessages((prev) => [...prev, data]);
+    },
+    [currentChatId]
+  );
 
   const refetchListner = useCallback(() => {
     refetch();
+    refetchMesseges();
     navigate("/");
-  }, [refetch, navigate]);
+  }, [refetch, refetchMesseges, navigate]);
 
   const eventHandler = {
     [NEW_MESSAGE]: newMessageHandler,
@@ -128,8 +125,6 @@ function ChatContainer() {
 
   if (isLoadingMessages) return <h1>Message loading</h1>;
 
-  // const allMessages = [...oldMessages, ...messages];
-
   return (
     <motion.div
       initial={{ opacity: 0, x: 0 }}
@@ -154,18 +149,14 @@ function ChatContainer() {
                   <MessageSenderPhoto att={att} key={i} />
                 ))
               ) : (
-                <MessageSenderItem key={i}>
-                  {message?.content}
-                </MessageSenderItem>
+                <MessageSenderItem key={i} message={message} />
               )
             ) : message?.content == "" ? (
               message?.attachments.map((att, i) => (
                 <MessageReceiverPhoto att={att} key={i} />
               ))
             ) : (
-              <MessageReceiverItem key={i}>
-                {message?.content}
-              </MessageReceiverItem>
+              <MessageReceiverItem key={i} message={message} />
             )
           )}
 
@@ -176,18 +167,14 @@ function ChatContainer() {
                 <MessageSenderPhoto att={att} key={i} />
               ))
             ) : (
-              <MessageSenderItem key={i}>
-                {message?.message?.content}
-              </MessageSenderItem>
+              <MessageSenderItem key={i} message={message?.message} />
             )
           ) : message?.message?.content === "" ? (
             message?.message?.attachments.map((att, i) => (
               <MessageReceiverPhoto att={att} key={i} />
             ))
           ) : (
-            <MessageReceiverItem key={i}>
-              {message?.message?.content}
-            </MessageReceiverItem>
+            <MessageReceiverItem key={i} message={message?.message} />
           )
         )}
 
@@ -207,15 +194,12 @@ function ChatInput({ chatId, members }) {
 
   const { currentChatId } = useSelector((state) => state.chat);
 
-  const { isFileMenu, iamTyping, userTyping } = useSelector(
-    (state) => state.misc
-  );
+  const { isFileMenu, iamTyping } = useSelector((state) => state.misc);
 
   const disable = currentChatId !== "" ? true : false;
 
   const handleSendMessage = () => {
     if (!message.trim()) return;
-    // emiiting message to the server
     socket.emit(NEW_MESSAGE, { chatId, members, message });
     setMessage("");
   };
@@ -268,7 +252,6 @@ function ChatInput({ chatId, members }) {
       <button
         className="rounded-full bg-[#B4D4F2] p-2 flex items-center justify-center shadow-lg"
         onClick={handleSendMessage}
-        // disabled={disable}
       >
         <PaperPlaneRight size={26} color="#666" />
       </button>

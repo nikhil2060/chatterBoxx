@@ -4,20 +4,16 @@ import {
   UserCirclePlus,
   Users,
   UsersFour,
-  UsersThree,
 } from "@phosphor-icons/react";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
-import { CircularProgress } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { useGetMyChats } from "../features/chatFeatures/useGetMyChats";
-import { setCurrentChat, setMyChats } from "../redux/reducer/chatSlice";
-import { setIsNotification, setIsSearch } from "../redux/reducer/miscSlice";
+import styled from "styled-components";
 import { resetNotificatinCount } from "../redux/reducer/chatNoteSlice";
+import { setIsNotification, setIsSearch } from "../redux/reducer/miscSlice";
 import ChatsList from "./ChatsList";
 import GroupsList from "./GroupsList";
 import UserMenu from "./userActionMenu";
-import styled from "styled-components";
 
 function ContactsContainer() {
   const dispatch = useDispatch();
@@ -30,7 +26,7 @@ function ContactsContainer() {
 
   const { isSearch, isNotification } = useSelector((state) => state.misc);
 
-  const { notificationCount } = useSelector((state) => state.chatNoti);
+  // const { notificationCount } = useSelector((state) => state.chatNoti);
 
   if (!user) return <h1>LOADING</h1>;
 

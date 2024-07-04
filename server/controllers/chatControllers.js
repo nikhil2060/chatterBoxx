@@ -338,8 +338,6 @@ module.exports.sendAttachments = async (req, res, next) => {
     // UPLOAD FILES
     const attachments = await uploadFilesToCloudnary(files);
 
-    console.log("Attachments:", attachments);
-
     const messageForDB = {
       content: "",
       attachments,
@@ -356,8 +354,6 @@ module.exports.sendAttachments = async (req, res, next) => {
     };
 
     const message = await Message.create(messageForDB);
-
-    console.log(message);
 
     emitEvent(req, NEW_MESSAGE, chat.members, {
       message: messageForRealTime,

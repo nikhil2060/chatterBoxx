@@ -1,19 +1,17 @@
-import { Video, Headphones, Image, File } from "@phosphor-icons/react";
-import React, { useEffect, useRef, useState } from "react";
-import styled from "styled-components";
-import toast from "react-hot-toast";
-import { useSendAttachments } from "../features/chatFeatures/useSendAttachments";
-import { useDispatch, useSelector } from "react-redux";
-import { setIsCreateGroup, setIsFileMenu } from "../redux/reducer/miscSlice";
 import axios from "axios";
-import { logOutRoute } from "../utils/AuthRoutes";
+import React, { useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
+import { useDispatch, useSelector } from "react-redux";
+import styled from "styled-components";
 import { userNotExists } from "../redux/reducer/authSlice";
+import { setIsCreateGroup } from "../redux/reducer/miscSlice";
+import { logOutRoute } from "../utils/AuthRoutes";
 
-function UserMenu({ chatId }) {
+function UserMenu() {
   const menuRef = useRef(null);
   const [menuLoaded, setMenuLoaded] = useState(false);
   const dispatch = useDispatch();
-  const { isSending, mutateSend } = useSendAttachments();
+  // const { isSending, mutateSend } = useSendAttachments();
 
   const { isCreateGroup } = useSelector((state) => state.misc);
 
@@ -29,7 +27,7 @@ function UserMenu({ chatId }) {
             dispatch(userNotExists());
           }
         })
-        .catch((err) => console.error("Something went wrong"));
+        .catch(() => console.error("Something went wrong"));
     } catch (error) {
       toast.error(error);
     }

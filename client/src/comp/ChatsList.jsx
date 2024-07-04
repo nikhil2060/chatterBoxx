@@ -1,31 +1,31 @@
 import React, { useEffect } from "react";
 
 import { CircularProgress } from "@mui/material";
+import { motion } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
 import { useGetMyChats } from "../features/chatFeatures/useGetMyChats";
 import { setCurrentChat, setMyChats } from "../redux/reducer/chatSlice";
-import { motion } from "framer-motion";
 
 function ChatsList() {
   const dispatch = useDispatch();
 
   const { currentChatId } = useSelector((state) => state.chat);
 
-  const { isLoading, error, myChats } = useGetMyChats();
+  const { isLoading, myChats } = useGetMyChats();
 
   useEffect(() => {
-    if (!isLoading) {
+    if (!isLoading && myChats) {
       dispatch(setMyChats(myChats));
     }
   }, [isLoading, myChats, dispatch]);
 
   return isLoading ? (
-    <div className="chat-section w-full bg-zinc-100 flex-grow overflow-auto rounded-b-xl">
+    <div className="chat-section w-full bg-zinc-100 flex-grow overflow-auto rounded-b-xl ml-[50%] mt-[50%] transform -translate-x-1/2 -translate-y-1/2 ">
       <CircularProgress />
     </div>
   ) : (
     <div className="chat-section w-full bg-zinc-100 flex-grow overflow-auto rounded-b-xl">
-      {myChats.map((contact, index) => {
+      {myChats?.map((contact, index) => {
         return (
           <ChatListItem
             key={index}

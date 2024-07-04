@@ -1,15 +1,15 @@
-import { useEffect, useState } from "react";
-import styled from "styled-components";
-import toast from "react-hot-toast";
-import "react-toastify/dist/ReactToastify.css";
-import { loginRoute } from "../utils/AuthRoutes";
-import { Link, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { userExists, userNotExists } from "../redux/reducer/authSlice";
 import { motion } from "framer-motion";
+import { useState } from "react";
+import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import "react-toastify/dist/ReactToastify.css";
+import styled from "styled-components";
+import { userExists, userNotExists } from "../redux/reducer/authSlice";
+import { loginRoute } from "../utils/AuthRoutes";
 
 function Login() {
-  const { user, isLoggedIn } = useSelector((state) => state.auth);
+  // const { user, isLoggedIn } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
   const navigate = useNavigate();

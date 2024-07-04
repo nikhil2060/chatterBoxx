@@ -1,18 +1,17 @@
 import {
   MagnifyingGlass,
-  UserCircle,
-  UserPlus,
   UserCircleCheck,
+  UserPlus,
 } from "@phosphor-icons/react";
+import { useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import styled from "styled-components";
 import { useSearchUser } from "../features/UserFeatures/useSearchUser";
-import { useQueryClient } from "@tanstack/react-query";
 import { sendRequest } from "../services/apiUser";
-import toast from "react-hot-toast";
 
 function SearchWindow() {
-  const [name, setName] = useState("");
+  const [name, setName] = useState(""); // eslint-disable-line no-unused-vars
   const queryClient = useQueryClient(); // Initialize queryClient
 
   useEffect(() => {
@@ -62,7 +61,7 @@ function SearchWindow() {
 
 export default SearchWindow;
 
-function ResultItem({ avatar, name, username, id }) {
+function ResultItem({ avatar, username, id }) {
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleSendRequest = async () => {

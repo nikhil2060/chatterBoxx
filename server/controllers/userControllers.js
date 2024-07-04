@@ -66,9 +66,7 @@ module.exports.login = async (req, res, next) => {
 
     if (!user) return res.json({ msg: "Incorrect Username", status: false });
 
-    // const isValidPassword = await bcrypt.compare(password, user.password);
-
-    const isValidPassword = password === user.password;
+    const isValidPassword = await bcrypt.compare(password, user.password);
 
     if (!isValidPassword)
       return res.json({ msg: "Incorrect Password", status: false });
@@ -234,7 +232,6 @@ module.exports.sendFriendRequest = async (req, res, next) => {
 };
 
 module.exports.acceptFriendRequest = async (req, res, next) => {
-  console.log("Received....");
   try {
     const { requestId, accept } = req.body;
 
@@ -243,12 +240,6 @@ module.exports.acceptFriendRequest = async (req, res, next) => {
         msg: "Please Enter Request Id",
         status: false,
       });
-
-    // if (accept !== Boolean)
-    //   return res.status(400).json({
-    //     msg: "Please Add Accept",
-    //     status: false,
-    //   });
 
     const request = await Request.findById(requestId)
       .populate("sender", "name")

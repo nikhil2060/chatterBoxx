@@ -1,10 +1,9 @@
-import { createPortal } from "react-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { useRef, useEffect, useCallback } from "react";
-import styled from "styled-components";
-import { setIsNotification, setIsSearch } from "../redux/reducer/miscSlice";
 import { XCircle } from "@phosphor-icons/react";
 import { motion } from "framer-motion";
+import { useCallback, useEffect, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import styled from "styled-components";
+import { setIsNotification } from "../redux/reducer/miscSlice";
 
 function NotificationModal({ children }) {
   const dispatch = useDispatch();

@@ -1,16 +1,16 @@
-import { Video, Headphones, Image, File } from "@phosphor-icons/react";
+import { Image } from "@phosphor-icons/react";
 import React, { useEffect, useRef, useState } from "react";
-import styled from "styled-components";
 import toast from "react-hot-toast";
-import { useSendAttachments } from "../features/chatFeatures/useSendAttachments";
 import { useDispatch } from "react-redux";
+import styled from "styled-components";
+import { useSendAttachments } from "../features/chatFeatures/useSendAttachments";
 import { setIsFileMenu } from "../redux/reducer/miscSlice";
 
 function FileMenu({ chatId }) {
   const menuRef = useRef(null);
   const [menuLoaded, setMenuLoaded] = useState(false);
   const dispatch = useDispatch();
-  const { isSending, mutateSend } = useSendAttachments();
+  const { mutateSend } = useSendAttachments();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -42,7 +42,7 @@ function FileMenu({ chatId }) {
     files.forEach((file) => formData.append("files", file));
 
     try {
-      const res = await mutateSend({ formData, key });
+      await mutateSend({ formData, key });
       toast("Sending...");
     } catch (error) {
       toast.error(error);

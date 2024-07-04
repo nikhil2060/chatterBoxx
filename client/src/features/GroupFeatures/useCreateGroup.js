@@ -24,7 +24,7 @@ export function useCreateGroup() {
     onSuccess: () => {
       queryClient.invalidateQueries("myGroups");
     },
-    onError: (err) => toast.error("Something went wrong"),
+    onError: () => toast.error("Something went wrong"),
   });
 
   return { isCreating, mutateCreate };

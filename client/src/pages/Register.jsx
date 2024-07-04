@@ -1,20 +1,19 @@
-import { useState } from "react";
+import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import styled from "styled-components";
 import { registerRoute } from "../utils/AuthRoutes";
-import { motion } from "framer-motion";
 
 function Register() {
-  const [isRegistering, setIsRegistering] = useState(false);
+  // const [isRegistering, setIsRegistering] = useState(false);
 
-  const { register, handleSubmit, formState, reset } = useForm();
+  const { register, handleSubmit, reset } = useForm();
 
-  const { isSubmitting, isSubmitted } = formState;
+  // const { isSubmitting, isSubmitted } = formState;
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const afterSubmit = async (data) => {
     const formData = new FormData();

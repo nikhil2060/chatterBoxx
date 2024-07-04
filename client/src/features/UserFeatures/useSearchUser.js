@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getNotifications, getSearchUser } from "../../services/apiUser";
+import { getSearchUser } from "../../services/apiUser";
 
 export function useSearchUser(name) {
   const { isLoading, data, error, refetch } = useQuery({

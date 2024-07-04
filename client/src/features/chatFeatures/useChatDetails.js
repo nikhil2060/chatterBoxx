@@ -2,7 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import { getChatDetails, getChatMessages } from "../../services/apiChat";
 
 export function useGetChatDetails(currentChatId, populate = "false") {
-  // console.log(currentChatId, populate);
   return useQuery({
     queryKey: ["chatDetails", currentChatId, populate],
     queryFn: () => getChatDetails(currentChatId, populate),

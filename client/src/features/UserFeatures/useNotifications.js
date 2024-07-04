@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getNotifications, acceptRequest } from "../../services/apiUser";
 import toast from "react-hot-toast";
+import { acceptRequest, getNotifications } from "../../services/apiUser";
 
 export function useGetNotifications() {
   const { isLoading, data, error, refetch } = useQuery({
@@ -25,7 +25,7 @@ export function useAcceptRequest() {
       });
     },
     cacheTime: 0,
-    onError: (err) => toast.error("Something went wrong"),
+    onError: () => toast.error("Something went wrong"),
   });
 
   return { isAccepting, mutateRequest };

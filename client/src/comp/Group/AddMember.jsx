@@ -120,17 +120,6 @@ const Title = styled.h2`
   text-align: center;
 `;
 
-const Input = styled.input`
-  width: 100%;
-  border-radius: 50px;
-  height: 40px;
-  padding: 10px;
-  font-weight: 400;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  /* box-shadow: 0px 10px 20px 1px #3333331d; */
-`;
-
 const MembersList = styled.div`
   width: 100%;
   overflow-y: auto;

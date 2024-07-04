@@ -1,27 +1,27 @@
+import { XCircle } from "@phosphor-icons/react";
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { useGetChatDetails } from "../features/chatFeatures/useChatDetails";
-import { PencilSimple, XCircle } from "@phosphor-icons/react";
 import {
   useDeleteGroup,
   useLeaveGroup,
   useRemoveGroupMember,
   useRenameGroup,
 } from "../features/GroupFeatures/useMutateGroup ";
-import { setIsAddGroupMember } from "../redux/reducer/miscSlice";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useGetChatDetails } from "../features/chatFeatures/useChatDetails";
 import { setCurrentChat } from "../redux/reducer/chatSlice";
+import { setIsAddGroupMember } from "../redux/reducer/miscSlice";
 
 function GroupDetails({ currentChatId }) {
   const navigate = useNavigate();
 
   const { isLoading, error, data } = useGetChatDetails(currentChatId, "true");
 
-  const { isRemoving, mutateRemove } = useRemoveGroupMember();
-  const { isDeleting, mutateDelete } = useDeleteGroup();
-  const { isLeaving, mutateLeave } = useLeaveGroup();
-  const { isRenaming, mutateRename } = useRenameGroup();
+  const { mutateRemove } = useRemoveGroupMember();
+  const { mutateDelete } = useDeleteGroup();
+  const { mutateLeave } = useLeaveGroup();
+  const { mutateRename } = useRenameGroup();
 
   const dispatch = useDispatch();
 
@@ -195,10 +195,6 @@ const MembersList = styled.div`
   gap: 10px;
 `;
 
-const Header = styled.div`
-  text-align: center;
-`;
-
 const ImageContainer = styled.div`
   display: flex;
   justify-content: center;
@@ -223,11 +219,6 @@ const UserName = styled.div`
   }
 `;
 
-const PhoneNumber = styled.div`
-  text-align: center;
-  color: #ccc;
-`;
-
 const ButtonsContainer = styled.div`
   display: flex;
   justify-content: center;
@@ -242,20 +233,6 @@ const Button = styled.button`
   border: none;
   padding: 5px 15px;
   border-radius: 59px;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #555;
-  }
-`;
-
-const EditButton = styled.button`
-  background-color: #152029;
-  font-size: 10px;
-  color: white;
-  border: none;
-  /* padding: 5px 15px; */
-  border-radius: 50%;
   cursor: pointer;
 
   &:hover {

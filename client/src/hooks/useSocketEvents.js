@@ -1,5 +1,4 @@
-import { useCallback, useEffect } from "react";
-import { NEW_MESSAGE } from "../contants/event";
+import { useEffect } from "react";
 
 function useSocketEvents(socket, handlers) {
   useEffect(() => {

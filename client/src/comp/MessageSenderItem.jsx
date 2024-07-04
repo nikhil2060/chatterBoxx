@@ -1,14 +1,26 @@
 import React from "react";
 import styled from "styled-components";
 
-function MessageSenderItem({ children }) {
+function MessageSenderItem({ message }) {
+  const { content, sender, createdAt } = message;
+  const formattedTime = new Date(createdAt).toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
   return (
     <div className="w-full flex justify-start">
       <OuterDiv>
-        {/* <ImgDiv>
-          <img src="/userIcon.jpeg" alt="sender image" />
-        </ImgDiv> */}
-        <ContentDiv>{children}</ContentDiv>
+        <ImgDiv>
+          <img src={sender.avatar.url} alt="sender image" />
+        </ImgDiv>
+        <ContentDiv>
+          <HeaderDiv>
+            <NameDiv className="mr-5">{sender.name}</NameDiv>
+            <TimeDiv>{formattedTime}</TimeDiv>
+          </HeaderDiv>
+          {content}
+        </ContentDiv>
       </OuterDiv>
     </div>
   );
@@ -22,7 +34,7 @@ const OuterDiv = styled.div`
   border-radius: 0px 20px 20px 20px;
 
   display: flex;
-  align-items: center;
+  align-items: flex-start; /* Align items to the top */
   gap: 10px;
 
   font-size: 12px;
@@ -32,21 +44,38 @@ const OuterDiv = styled.div`
   overflow: hidden;
 `;
 
+const ImgDiv = styled.div`
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+`;
+
 const ContentDiv = styled.div`
   flex: 1; /* Allow content to take up available space */
   word-break: break-word; /* Ensure content breaks correctly */
   padding: 5px;
 `;
 
-const ImgDiv = styled.div`
-  width: 30px;
-  min-height: 30px;
-  overflow: hidden;
-  border-radius: 100%;
+const HeaderDiv = styled.div`
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  border: 1px solid #fff;
+  margin-bottom: 5px;
+`;
+
+const NameDiv = styled.div`
+  font-weight: bold;
+`;
+
+const TimeDiv = styled.div`
+  font-size: 10px;
+  color: #666;
 `;
 
 export default MessageSenderItem;

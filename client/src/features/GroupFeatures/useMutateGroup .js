@@ -1,5 +1,5 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getMyFriends } from "../../services/apiUser";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 import {
   AddGroupMembers,
   deleteGroupChat,
@@ -7,7 +7,6 @@ import {
   removeGroupMember,
   renameGroup,
 } from "../../services/apiGroup";
-import toast from "react-hot-toast";
 
 export function useRemoveGroupMember() {
   const queryClient = useQueryClient();
@@ -19,7 +18,7 @@ export function useRemoveGroupMember() {
       queryClient.invalidateQueries("myGroups");
       queryClient.invalidateQueries("myChats");
     },
-    onError: (err) => toast.error("Something went wrong"),
+    onError: () => toast.error("Something went wrong"),
   });
 
   return { isRemoving, mutateRemove };
@@ -35,7 +34,7 @@ export function useAddGroupMembers() {
       queryClient.invalidateQueries("myGroups");
       queryClient.invalidateQueries("myChats");
     },
-    onError: (err) => toast.error("Something went wrong"),
+    onError: () => toast.error("Something went wrong"),
   });
 
   return { isAdding, mutateAdd };
@@ -51,7 +50,7 @@ export function useDeleteGroup() {
       queryClient.invalidateQueries("myGroups");
       queryClient.invalidateQueries("myChats");
     },
-    onError: (err) => toast.error("Something went wrong"),
+    onError: () => toast.error("Something went wrong"),
   });
 
   return { isDeleting, mutateDelete };
@@ -67,7 +66,7 @@ export function useLeaveGroup() {
       queryClient.invalidateQueries("myGroups");
       queryClient.invalidateQueries("myChats");
     },
-    onError: (err) => toast.error("Something went wrong"),
+    onError: () => toast.error("Something went wrong"),
   });
 
   return { isLeaving, mutateLeave };
@@ -83,7 +82,7 @@ export function useRenameGroup() {
       queryClient.invalidateQueries("myGroups");
       queryClient.invalidateQueries("myChats");
     },
-    onError: (err) => toast.error("Something went wrong"),
+    onError: () => toast.error("Something went wrong"),
   });
 
   return { isRenaming, mutateRename };
